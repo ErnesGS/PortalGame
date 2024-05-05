@@ -1,0 +1,2271 @@
+<?xml version='1.0' encoding='utf8'?>
+<schemalist>
+
+  <schema id="com.nicesoftware.dcv.audio" path="/com/nicesoftware/dcv/audio/" gettext-domain="dcv">
+
+    <key name="avsync-support" enum="com.nicesoftware.dcv.DcvAvSyncFeature">
+      <default>'auto'</default>
+      <summary>Determine if the clients can enable audio/video synchronization</summary>
+      <description>Allows connected clients to enable audio/video synchronization. The valid values are 'enabled',
+      'disabled' or 'auto' (default='auto'). If 'auto' is specified, the audio/video synchronization is enabled
+      only on console sessions and only if accelerated video compression is available.</description>
+    </key>
+
+    <key name="buffer-time" type="u">
+      <default>40</default>
+      <summary>Audio injection buffer-time in msec</summary>
+      <description>Sets the buffer-time in msec used into the virtual microphone audio injection.
+      Default value 40 msec.</description>
+    </key>
+
+    <key name="buffer-resync-interval" type="u">
+      <default>10000</default>
+      <summary>Audio injection buffer resync interval in msec</summary>
+      <description>Sets the interval to update the ideal and maximum audio buffer size used into
+      the virtual microphone audio injection. Default value 10000 msec.</description>
+    </key>
+
+    <key name="default-profile" type="s">
+      <default>'generic'</default>
+      <summary>Default audio profile</summary>
+      <description>Sets the default audio profile that must be chosen if it is available in the
+      client.</description>
+    </key>
+
+    <key name="frame-length" type="u">
+      <default>20</default>
+      <summary>Default audio samples frame-length in msec</summary>
+      <description>Sets the default length in msec of audio samples used by grabber and injector.
+      Default value 20 msec.</description>
+    </key>
+
+    <key name="grab-device" type="s">
+      <default>'dcv-default-setting'</default>
+      <summary>Grabbing device name</summary>
+      <description>Specifies the grabbing device name. If empty audio grabbing will be disabled.
+      If absent 'AWS Virtual Speakers 7.1' will be considered on Windows and the first 'pulse-monitor'
+      device will considered on Linux.</description>
+    </key>
+
+    <key name="grab-strategy" enum="com.nicesoftware.dcv.DcvAudioGrabStrategy">
+      <default>'none'</default>
+      <summary>The audio grabbing strategy</summary>
+      <description>Specifies which API should be used for audio grabbing and whether the loopback
+      feature of the API should be used to grab from a render devices.
+      Allowed values include 'wasapi', 'wasapi-loopback' on Windows and 'pulse', 'pulse-monitor'
+      on Linux. If absent the default value 'wasapi-loopback' on Windows and 'pulse' on
+      Linux will be considered.</description>
+    </key>
+
+    <key name="inject-device" type="s">
+      <default>'dcv-default-setting'</default>
+      <summary>Injection device name</summary>
+      <description>Specifies the injection device name. If empty audio injection will be disabled.
+      If absent OS dependent default device name will be used: on windows 'DCV
+      Microphone'.</description>
+    </key>
+
+    <key name="silence-length" type="u">
+      <default>5000</default>
+      <summary>Audio silence-length in msec</summary>
+      <description>Sets the length in msec of the silence interval before stopping sending audio
+      samples. Silence detection is disabled when 0. Default value 5 seconds.</description>
+    </key>
+
+    <key name="source-channels" type="u">
+      <default>2</default>
+      <summary>Number of channels of the speaker device on Linux</summary>
+      <description>Sets the number of channels of the Linux speaker device. The value must be
+      less than or equal to the number of channels supported by the device. Allowed values are:
+      2 (stereo), 4 (4.0 quadriphonic), 6 (5.1 surround), 8 (7.1 surround).
+      Default value is 2 (stereo).</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.audio.generic" path="/com/nicesoftware/dcv/audio/generic/" gettext-domain="dcv">
+
+    <key name="codecs" type="as">
+      <default>['opus', 'raw']</default>
+      <summary>List of codecs for generic profile</summary>
+      <description>Specifies the list of available audio encoding codecs available for the generic
+      audio profile. They are sorted by preference.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.audio.generic.opus" path="/com/nicesoftware/dcv/audio/generic/opus/" gettext-domain="dcv">
+
+    <key name="bitrates" type="au">
+      <default>[32, 64, 128, 160, 192]</default>
+      <summary>List of bitrates</summary>
+      <description>Specifies the list of available audio encoding bitrates (in kbps) available for
+      the generic profile and codec Opus.</description>
+    </key>
+
+    <key name="default-bitrate" type="u">
+      <default>64</default>
+      <summary>Default bitrate</summary>
+      <description>Specifies the default bitrate for audio encoding. This value must be one of the
+      available bitrates for generic profile.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.audio.generic.raw" path="/com/nicesoftware/dcv/audio/generic/raw/" gettext-domain="dcv">
+
+    <key name="bitrates" type="au">
+      <default>[192]</default>
+      <summary>List of bitrates</summary>
+      <description>Specifies the list of the available bitrates (in kbps) for audio encoding on the
+      generic profile and codec Raw. This is a "fake" bitrate because Raw doesn't have any
+      encoding.</description>
+    </key>
+
+    <key name="default-bitrate" type="u">
+      <default>192</default>
+      <summary>Default bitrate</summary>
+      <description>Specifies the bitrate for the default audio encoding. This value must be one of
+      the available bitrates for the generic profile and codec Raw. This is a "fake" bitrate because
+      Raw doesn't have any encoding.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.audio.voice" path="/com/nicesoftware/dcv/audio/voice/" gettext-domain="dcv">
+
+    <key name="codecs" type="as">
+      <default>['opus']</default>
+      <summary>List of codecs for profile Voice</summary>
+      <description>Specifies the list of available audio encoding codecs for the voice profile. They
+      are sorted by preference.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.audio.voice.opus" path="/com/nicesoftware/dcv/audio/voice/opus/" gettext-domain="dcv">
+
+    <key name="bitrates" type="au">
+      <default>[16, 24, 32]</default>
+      <summary>List of bitrates</summary>
+      <description>Specifies the list of available audio encoding bitrates (in kbps) for the voice
+      profile and codec Opus.</description>
+    </key>
+
+    <key name="default-bitrate" type="u">
+      <default>32</default>
+      <summary>Default bitrate</summary>
+      <description>Specifies the bitrate of the default audio encoding. This value must be one of
+      the available bitrates for the voice profile.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.clipboard" path="/com/nicesoftware/dcv/clipboard/" gettext-domain="dcv">
+
+    <key name="clipboard-quirks" flags="com.nicesoftware.dcv.DcvClipboardQuirks">
+        <default>[]</default>
+        <summary>Clipboard sharing quirks</summary>
+        <description>Selects workarounds for clipboard sharing quirks. Allowed values are:
+        'allow-html-when-rtf-available' (HTML may include paths to local images so it is more safe
+        to expose only RTF when it is available), 'primary-selection-paste' (enables the primary
+        selection pasting on linux), 'primary-selection-copy' (enables the primary selection copy
+        from linux). If this value is missing no flag is assigned.</description>
+    </key>
+
+    <key name="disabled-targets" type="as">
+        <default>['Biff5', 'Biff8', 'Biff12', 'CF_HDROP', 'Preferred DropEffect']</default>
+        <summary>Clipboard targets to be disabled</summary>
+        <description>Specifies the clipboard target formats to be disabled.  Accepted values are:
+        'dcv/text', 'dcv/image', 'dcv/rtf', 'dcv/html', 'dcv/raw' and any raw format string.  Please
+        note that disabling a cross platform target do not disables the corresponding raw targets.
+        Default value: ['Biff5', 'Biff8', 'Biff12', 'CF_HDROP', 'Preferred DropEffect'].
+        </description>
+    </key>
+
+    <key name="ignore-events-targets" type="as">
+        <default>['Shell IDList Array']</default>
+        <summary>Clipboard targets of update events to be ignored</summary>
+        <description>Specifies the clipboard target formats of local and remote update events be
+        ignored. Accepted values are: 'dcv/text', 'dcv/image', 'dcv/rtf', 'dcv/html', 'dcv/raw'
+        and any raw format string. Default value: ['Shell IDList Array'].</description>
+    </key>
+
+    <key name="enabled" type="b">
+        <default>true</default>
+        <summary>Whether the clipboard feature should be enabled</summary>
+        <description>Specifies if the clipboard feature is enabled. If the clipboard feature is
+        disabled, users will not be able to use the clipboard remotization. Clipboard monitoring
+        will be disabled too.</description>
+    </key>
+
+    <key name="primary-selection-copy" type="b">
+      <default>false</default>
+      <summary>Enable the primary selection copy from linux</summary>
+      <description>Linux desktops support multiple clipboards: the generic clipboard and the primary
+      selection. The primary selection is updated or copied when content is selected. It can then be
+      pasted using the mouse's middle button or with the Shift+Insert key combination. When enabled,
+      the primary selection is monitored and updates are propagated to the client.
+      </description>
+    </key>
+
+    <key name="max-image-area" type="i">
+      <default>-1</default>
+      <summary>Maximum area of clipboard's image</summary>
+      <description>Specifies the maximum area (number of pixels) of clipboard images that can be
+      transferred between server and clients. If this value is missing or set to -1, the limit is
+      not applied.</description>
+    </key>
+
+    <key name="max-image-area-copy" type="i">
+      <default>-1</default>
+      <summary>Maximum area of clipboard's image</summary>
+      <description>Specifies the maximum area (number of pixels) of clipboard images that can be
+      transferred from server to clients. If this value is missing max-image-area is considered,
+      otherwise the minimum of the two values is applied.</description>
+    </key>
+
+    <key name="max-image-area-paste" type="i">
+      <default>-1</default>
+      <summary>Maximum area of clipboard's image</summary>
+      <description>Specifies the maximum area (number of pixels) of clipboard images that can be
+      transferred from clients to server. If this value is missing max-image-area is considered,
+      otherwise the minimum of the two values is applied.</description>
+    </key>
+
+    <key name="max-payload-size" type="i">
+      <default>20971520</default>
+      <summary>Maximum size of clipboard's data</summary>
+      <description>Specifies the maximum size (in bytes) of clipboard data that can be transferred
+      between server and clients. Maximum supported value 20 MB. If this value is missing, the
+      maximum limit is enforced.</description>
+    </key>
+
+    <key name="max-payload-size-copy" type="i">
+      <default>-1</default>
+      <summary>Maximum size of clipboard's data</summary>
+      <description>Specifies the maximum size (in bytes) of clipboard data that can be transferred
+      from server to clients. If this value is missing max-payload-size is considered, otherwise
+      the minimum of the two values is applied.
+      </description>
+    </key>
+
+    <key name="max-payload-size-paste" type="i">
+      <default>-1</default>
+      <summary>Maximum size of clipboard's data</summary>
+      <description>Specifies the maximum size (in bytes) of clipboard data that can be transferred
+      from clients to server. If this value is missing max-payload-size is considered, otherwise
+      the minimum of the two values is applied.
+      </description>
+    </key>
+
+    <key name="max-text-len" type="i">
+      <default>-1</default>
+      <summary>Maximum number of characters of clipboard's text</summary>
+      <description>Specifies the maximum number of characters of clipboard text that can be
+      transferred from server to clients. Excess characters will be truncated.
+      If this value is missing or set to -1, the limit is not applied.</description>
+    </key>
+
+    <key name="max-text-len-copy" type="i">
+      <default>-1</default>
+      <summary>Maximum number of characters of clipboard's text</summary>
+      <description>Specifies the maximum number of characters of clipboard text that can be
+      transferred from server to clients. Excess characters will be truncated.
+      If this value is missing max-text-len is considered, otherwise the minimum of the two
+      values is applied.</description>
+    </key>
+
+    <key name="max-text-len-paste" type="i">
+      <default>-1</default>
+      <summary>Maximum number of characters of clipboard's text</summary>
+      <description>Specifies the maximum number of characters of clipboard text that can be
+      transferred from clients to server. Excess characters will be truncated.
+      If this value is missing max-text-len is considered, otherwise the minimum of the two
+      values is applied.</description>
+    </key>
+
+    <key name="primary-selection-paste" type="b">
+      <default>false</default>
+      <summary>Enable the primary selection pasting on linux</summary>
+      <description>Linux desktops support multiple clipboards: the generic clipboard and the primary
+      selection. The primary selection is updated or copied when content is selected. It can then be
+      pasted using the mouse's middle button or the Shift+Insert key combination. When enabled, the
+      client's clipboard content will be also inserted in the primary selection.
+      </description>
+    </key>
+
+    <key name="update-timeout" type="u">
+      <default>200</default>
+      <summary>Update event notification timeout</summary>
+      <description>Specifies the time in msec to wait from the last update event for sending the
+      notification to the client. Default value 200 msec.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.connectivity" path="/com/nicesoftware/dcv/connectivity/" gettext-domain="dcv">
+
+    <key name="congestion-control-strategy" enum="com.nicesoftware.dcv.DcvCongestionControlStrategy">
+      <default>'gcc'</default>
+      <summary>The congestion control strategy applied for UDP connections</summary>
+      <description>
+        Specifies the congestion control strategy which shall be applied for QUIC connections.
+
+        Currently, the following values are supported (each value corresponds to a different strategy
+        and they are mutually exclusive):
+            - gcc: It uses an internal implementation of Google Congestion Control.
+            - quic: It uses the congestion control from QUIC internal implementation.
+            - none: It completely disables any form of congestion control.
+      </description>
+    </key>
+
+    <key name="disconnect-on-lock" type="b">
+      <default>false</default>
+      <summary>Whether the clients are disconnected on OS session lock</summary>
+      <description>
+        Enable this to force client disconnection when the remote OS session is locked.
+        Otherwise clients will continue to stream the remote session.
+        Currently supported only on console sessions.
+        This parameter value is read at every remote OS session lock.
+      </description>
+    </key>
+
+    <key name="disconnect-on-logout" type="b">
+      <default>false</default>
+      <summary>Whether the clients are disconnected on OS user logout</summary>
+      <description>
+        Enable this to force client disconnection when the remote OS user is logged out (i.e. OS session is closed).
+        Otherwise clients will continue to stream the remote session.
+        Currently supported only on console sessions.
+        This parameter value is read at every remote OS user logout.
+      </description>
+    </key>
+
+    <key name="dqt-alpn-versions" type="as">
+      <default>['Dqt10','Dqt02Draft','Dqt01Draft','Dcv20Basic']</default>
+      <summary>Specify the DQT application versions meant to be used during connection establishment</summary>
+      <description>
+        Specifies a list of supported ALPN versions supported by server. During handshake with the
+        client, the server will select the first available matching from the list, in order.
+        Therefore, the list is ordered by version selection preferences.
+        Currently, the following version values are supported: Dqt10, Dqt02Draft, Dqt01Draft,
+        Dcv20Basic.
+      </description>
+    </key>
+
+    <key name="enable-quic-frontend" type="b">
+      <default>false</default>
+      <summary>Whether to enable the QUIC frontend</summary>
+      <description>
+        Specifies whether the QUIC frontend should be enabled.
+      </description>
+    </key>
+
+   <key name="enable-datagrams-audio" enum="com.nicesoftware.dcv.DcvFeatureSetting">
+      <default>'client-decides'</default>
+      <summary>Whether to enable usage of datagrams for audio playback.</summary>
+      <description>
+        Enabling this feature it allows sending audio playback data using datagrams.
+        The feature is applicable only with QUIC transport.
+        Accepted values are 'client-decides', 'always-on', 'always-off'.
+        If the value for this setting is 'always-off', the server will use streams for audio playback.
+        If the value is 'always-on', the server will use datagrams unless it's communicating with an old client that is not compatible with datagrams.
+        If the value is 'client-decides', the server will use streams if the client advertises preference for streams through the use of downgraded ALPNs or feature flags.
+      </description>
+    </key>
+
+    <key name="enable-datagrams-display" enum="com.nicesoftware.dcv.DcvFeatureSetting">
+      <default>'client-decides'</default>
+      <summary>Whether to enable usage of datagrams for display.</summary>
+      <description>
+        Enabling this feature it allows sending display tile updates using datagrams.
+         The feature is applicable only with QUIC transport.
+        Accepted values are 'client-decides', 'always-on', 'always-off'.
+        If the value for this setting is 'always-off', the server will use streams for the display.
+        If the value is 'always-on', the server will use datagrams unless it's communicating with an old client that is not compatible with datagrams.
+        If the value is 'client-decides', the server will use streams if the client advertises preference for streams through the use of downgraded ALPNs or feature flags.
+      </description>
+    </key>
+
+    <key name="enable-unreliable-input" type="b">
+      <default>true</default>
+      <summary>Whether to enable the unreliable transport for input data</summary>
+      <description>
+        Enabling this feature it allows communication over unreliable transport.
+        The feature is applicable only with QUIC transport.
+      </description>
+    </key>
+
+    <key name="idle-timeout" type="u">
+      <default>60</default>
+      <summary>Idle timeout</summary>
+      <description>Specifies the number of minutes to wait before disconnecting idle
+      clients. Specify 0 to never disconnect idle clients. This parameter value is
+      read every second.</description>
+    </key>
+
+    <key name="idle-timeout-warning" type="u">
+      <default>350</default>
+      <summary>Idle timeout warning</summary>
+      <description>Specifies the number of seconds relative to idle-timeout to wait before warning
+      idle clients about idle timeout disconnection. Specify 0 to never warn idle
+      clients.</description>
+    </key>
+
+    <key name="min-target-bitrate" type="t">
+      <default>0</default>
+      <summary>Minimum target bitrate</summary>
+      <description>
+        Specifies the minimum target bitrate (in Kbps) for connections using QUIC transport.
+        A zero value (default value) means 100 Kbps.
+      </description>
+    </key>
+
+    <key name="min-video-adaptive-bitrate-level" type="u">
+      <default>0</default>
+      <summary>Level of min bitrate adaptive to video content</summary>
+      <description>
+        This value is used to calculate the minimum bitrate adaptive to video content as the
+        percentage of min adaptive bitrate provided by the encoder. If set to 0, the min adaptive
+        bitrate is disabled. For instance, a value of 100 at 1920x1080@25 equals to 2 Mbps and
+        1920x1080@25 equals to 5 Mbps
+      </description>
+    </key>
+
+    <key name="max-target-bitrate" type="t">
+      <default>0</default>
+      <summary>Maximum target bitrate</summary>
+      <description>
+          Specifies the maximum target bitrate (in Kbps) for connections using QUIC transport.
+          A zero value (default value) means 100 Mbps.
+      </description>
+    </key>
+
+    <key name="max-video-adaptive-bitrate-level" type="u">
+      <default>0</default>
+      <summary>Level of max bitrate adaptive to video content</summary>
+      <description>
+        This value is used to calculate the maximum bitrate adaptive to video content as the
+        percentage of max adaptive bitrate provided by the encoder divided this value. If set
+        to 0, the max adaptive bitrate is disabled. For instance, a value of 100 at 1920x1080@25
+        equals to 12.9 Mbps and 1920x1080@60 equals to 31 Mbps
+      </description>
+    </key>
+
+    <key name="quic-idle-timeout" type="u">
+      <default>10</default>
+      <summary>Quic idle timeout</summary>
+      <description>
+        Specifies the timeout (in seconds) after which quic connections are marked as idle. If
+        set to 0, the idle timeout is not set.
+      </description>
+    </key>
+
+    <key name="quic-listen-endpoints" type="as">
+      <default>['0.0.0.0', '::']</default>
+      <summary>Specify the endpoints over which DCV listens for incoming QUIC connections</summary>
+      <description>
+        Specifies a list of endpoints where DCV will listen for incoming QUIC connections.
+        The endpoints can be a list of local bindable IPv4 addresses ('0.0.0.0' to wildcard all
+        the possible addresses), or bindable IPv6 addresses ('::' to wildcard all the possible
+        addresses) with an optional port separated by a colon (':'). For example, '1.2.3.4:5678'
+        would listen for incoming connections on the interface associated with the '1.2.3.4'
+        address, on port of 5678. If the port is not specified the setting in 'quic-port' will
+        be used as a default. To specify a port with an IPv6 address, enclose the address in
+        square brackets (e.g. '[::1]:8443'). IPv6 addresses including an explicit interface are
+        also supported (e.g. '[::%eth1]:8443').
+      </description>
+    </key>
+
+    <key name="quic-port" type="q">
+      <default>8443</default>
+      <summary>UDP port for the QUIC frontend</summary>
+      <description>
+        Specifies the UDP port on which the DCV server listens for client connections.
+        The port number must be between 1024 and 65535. See the 'quic-listen-endpoints'
+        setting for further details on how this setting is applied.
+      </description>
+    </key>
+
+    <key name="socket-timeout" type="u">
+      <default>25</default>
+      <summary>Socket timeout</summary>
+      <description>Specifies the socket timeout (in seconds). If set to 0, the socket-timeout is not
+      set.</description>
+    </key>
+
+    <key name="target-bitrate" type="t">
+      <default>0</default>
+      <summary>Target bitrate</summary>
+      <description>
+        Specifies the target bitrate for connections using QUIC transport (in bps).
+        If set to 0, the target bitrate provided by the congestion controller will be used.
+      </description>
+    </key>
+
+    <key name="web-extra-http-headers" type="a(ss)">
+      <default>[]</default>
+      <summary>Set the array of extra headers to be added to the HTTP/HTTPS headers</summary>
+      <description>Uses it to add extra headers. The array should be filled with couples like:
+      [('header_name','header_content')]. Multiple headers can be added.</description>
+    </key>
+
+    <key name="web-listen-endpoints" type="as">
+      <default>['0.0.0.0', '::']</default>
+      <summary>Specify the endpoints over which DCV listens for incoming web connections</summary>
+      <description>
+        Specifies a list of endpoints where DCV will listen for incoming web connections.
+        The endpoints can be a list of local bindable IPv4 addresses ('0.0.0.0' to wildcard all
+        the possible addresses), or bindable IPv6 addresses ('::' to wildcard all the possible
+        addresses) with an optional port separated by a colon (':'). For example, '1.2.3.4:5678'
+        would listen for incoming connections on the interface associated with the '1.2.3.4'
+        address, on port of 5678. If the port is not specified the setting in 'web-port' will
+        be used as a default. To specify a port with an IPv6 address, enclose the address in
+        square brackets (e.g. '[::1]:8443'). IPv6 addresses including an explicit interface are
+        also supported (e.g. '[::%eth1]:8443').
+      </description>
+    </key>
+
+    <key name="web-port" type="q">
+      <default>8443</default>
+      <summary>TCP port for the client</summary>
+      <description>
+        Specifies the TCP port on which the DCV server listens for client connections.
+        The port number must be between 1024 and 65535. See the 'web-listen-endpoints'
+        setting for further details on how this setting is applied.
+      </description>
+    </key>
+
+    <key name="web-root" type="s">
+      <default>''</default>
+      <summary>Document root for the embedded web server</summary>
+      <description>Specifies the document root for the embedded web server.</description>
+    </key>
+
+    <key name="web-url-path" type="s">
+      <default>'/'</default>
+      <summary>URL path for the embedded web server</summary>
+      <description>Specifies the URL path for the embedded web server, must start with '/'. For
+      example, setting it to /test/foo means that the web server is reachable at
+      https://host:port/test/foo.</description>
+    </key>
+
+    <key name="web-use-hsts" type="b">
+      <default>true</default>
+      <summary>Whether to use HSTS</summary>
+      <description>Enables this to force browsers to prevent any communication being sent over HTTP.
+      All transfer to the webpage (and all subdomains) will be done using HTTPS instead.</description>
+    </key>
+
+    <key name="web-use-https" type="b">
+      <default>true</default>
+      <summary>Use TLS for the HTML5-based clients</summary>
+      <description>Uses HTTPS and WSS for the embedded web server connections.
+      This parameter should be set to false ONLY to debug problems. Using this
+      option in production is insecure.</description>
+    </key>
+
+    <key name="web-x-frame-options" type="s">
+      <default>'DENY'</default>
+      <summary>Set the X-Frame-Options value</summary>
+      <description>The default value is set to DENY. If you change this, you must introduce another
+      form of protection to avoid clickjacking attacks. If you do not have other protection, do not
+      change this setting.</description>
+    </key>
+
+    <key name="ws-keepalive-interval" type="u">
+      <default>10</default>
+      <summary>Websocket keepalive interval</summary>
+      <description>Specifies the interval (in seconds) after which to send a keepalive message. If
+      set to 0, the keepalive message is disabled.</description>
+    </key>
+
+    <key name="ws-message-reception-timeout" type="u">
+      <default>30</default>
+      <summary>Maximum websocket message reception timeout</summary>
+      <description>
+        Specifies the maximum time without receiving websocket messages before considering
+        the connection broken. If set to 0, the check is disabled.
+      </description>
+    </key>
+
+
+
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.display" path="/com/nicesoftware/dcv/display/" gettext-domain="dcv">
+
+    <key name="allow-nvidia-vmonitor-init" type="b">
+      <default>true</default>
+      <summary>Whether to allow virtual monitor initialization with Nvidia adapters</summary>
+      <description>Specifies whether to allow virtual monitor initialization with Nvidia adapters.
+      If enabled, virtual monitors will be added during layout manager initialization in case
+      there are no monitors detected.
+      </description>
+    </key>
+
+    <key name="apply-client-dpi" type="b">
+      <default>true</default>
+      <summary>Apply the dpi of the client</summary>
+      <description>
+        Applies the dpi of the client to the layout of the server if supported by the OS.
+      </description>
+    </key>
+
+    <key name="block-size" type="u">
+      <default>32</default>
+      <summary>Tile block size</summary>
+      <description>Sets the minimum size of tiles used when processing the screen content.
+      The setting is reloaded at each agent restart.</description>
+    </key>
+
+    <key name="console-session-default-layout" type="aa{sv}">
+      <default>[]</default>
+      <summary>Default screen resolution and position for console sessions</summary>
+      <description>Specifies the default screen resolution and position for console sessions. If
+      this is set, DCV sets the requested layout at startup. Each monitor can be configured with
+      resolution (w,h) and position (x,y). All specified monitors are enabled.
+       Default layout example value: [{'w':&lt;800&gt;, 'h':&lt;600&gt;, 'x':&lt;0&gt;, 'y': &lt;0&gt;},
+      {'w':&lt;1024&gt;, 'h':&lt;768&gt;, 'x':&lt;800&gt;,'y':&lt;0&gt;}] 
+      </description>
+    </key>
+
+    <key name="cuda-devices" type="as">
+      <default>[]</default>
+      <summary>CUDA devices used for stream encoding</summary>
+      <description>Specifies the list of local CUDA devices which DCV uses to
+      distribute encoding and CUDA workloads. Each device is identified by a number that can be
+      retrieved from the nvidia-smi command. For example, cuda-devices=['0', '2'] indicates that
+      DCV uses two GPUs, with IDs 0 and 2. This setting is similar to the
+      CUDA_VISIBLE_DEVICES environment variable, but it only applies to DCV.
+      If the option is not set, DCV uses an incremental session index starting from 0 to pick the
+      next device to use.
+      </description>
+    </key>
+
+    <key name="diffmap-refine-threshold" type="i">
+      <default>0</default>
+      <summary>Set threshold for diffmap refining</summary>
+      <description>Diffmaps reported by the low-level grabber functions are refined only if the number of reported dirty
+      blocks is bigger than this threshold. If this threshold is set to -1, the diffmap is not refined. If the threshold is set
+      to 0, the diffmap is always refined. Only DTS and XCB grabbers currently support diffmap refining.</description>
+    </key>
+
+    <key name="display-encoders" type="as">
+      <default>[]</default>
+      <summary>Display encoders</summary>
+      <description>Specifies the name of the display encoders to use. An empty list enables all
+      display encoders. The display encoders are ['nvenc', 'amd', 'amf', 'vaapi', 'ffmpeg', 'turbojpeg', 'lz4'].
+      </description>
+    </key>
+
+    <key name="dynamic-diffmap-refine" type="b">
+      <default>false</default>
+      <summary>Enable or disable diffmap refinement depending on input framerate</summary>
+      <description>Diffmaps reported by the low-level grabber functions are refined
+      only if the estimated time to compute the refinement is negligible with respect to
+      the total frame time (less than 1/10 of the frame time).</description>
+    </key>
+
+    <key name="enable-client-resize" type="b">
+      <default>true</default>
+      <summary>Whether to allow clients to set the display layout</summary>
+      <description>Specifies whether clients are allowed to set the display layout.</description>
+    </key>
+
+    <key name="enable-layout-constraints" type="b">
+      <default>true</default>
+      <summary>Whether to enforce layout constraints</summary>
+      <description>Enables or disables layout constraints enforcement when the server monitor layout changes.
+      Each layout manager implementation will enforce different layout constraints depending on the environment requirements.
+      Layout constraints are applied to monitor layout when it changes, regardless of the cause of the change. The constraints
+      are i.e. enforced also when the change is not caused by DCV (e.g. if it is manually performed by the user or by another
+      application).</description>
+    </key>
+
+    <key name="enable-qu" type="b">
+      <default>true</default>
+      <summary>Whether to send quality updates</summary>
+      <description>Specifies whether to send quality updates.</description>
+    </key>
+
+    <key name="enable-yuv444-encoding" enum="com.nicesoftware.dcv.DcvEnableFeature">
+      <default>'default-off'</default>
+      <summary>Whether to enable YUV444 encoding</summary>
+      <description>Enables or disables YUV444 encoding.
+      If 'always-on' the server will prefer the YUV444 format that is optimized for high color accuracy.
+      If 'always-off' the server will prefer a format that is optimized for streaming performance.
+      The values 'default-on' and 'default-off' have the same semantics, which is to let the client decide.
+      Allowed values: 'always-on', 'always-off', 'default-on', 'default-off'.</description>
+    </key>
+
+    <key name="enable-window-tracking" type="b">
+        <default>false</default>
+        <summary>Enable window tracker</summary>
+        <description>
+            Enables window tracking and server will start the seamless service on client request.
+        </description>
+    </key>
+
+    <key name="encoding-mode" enum="com.nicesoftware.dcv.DcvDisplayEncodingMode">
+      <default>'vbr'</default>
+      <summary>Encoding mode used for unreliable streams</summary>
+      <description>
+        Controls the encoding mode used for unreliable streams.
+        Allowed values: 'qp' (Quantization), 'cbr' (Constant Bit Rate), 'vbr' (Variable Bit Rate).
+      </description>
+    </key>
+
+    <key name="flow-controller" enum="com.nicesoftware.dcv.DcvFlowStrategy">
+      <default>'auto'</default>
+      <summary>Flow controller strategy to apply</summary>
+      <description>
+        Specifies the flow controller strategy to be applied.
+
+        Currently, the following values are supported:
+        `auto`, `fit`, `fit-precise`, `fit-precise-sync`, `time-window`, `time-window-sync`
+
+        The strategies are:
+          - auto:
+              Selects the best strategy according to DCV network configuration.
+          - fit:
+              Limits the number of frames in transit using the latency of the display
+              channel to modulate between two threshold values. This is the only one
+              supported on WebSocket protocol.
+          - fit-precise:
+              Limits the number of frames in transit using the transport measured RTT
+              to modulate between two threshold values. This strategy is experimental
+              and currently tested only to work with GPU instances at 60fps. If a
+              gateway is in the connection and there is no RTT communication (for example
+              because the gateway version is too old), it will fall-back to `fit`.
+          - fit-precise-sync:
+              Same as `fit-precise` but limits the emission of new frames if the network
+              reports being flow-limited or congestion-limited. This strategy is experimental
+              and currently tested only to work with GPU instances at 60fps.
+          - time-window:
+              Instead of limiting the number of frames-in-transit, it limits the maximum time
+              gap with the oldest frame so that it nevers get higher than the transport measured
+              RTT. If a gateway is in the connection and there is no RTT communication (for example
+              because the gateway version is too old), it will fall-back to `fit`.
+              This strategy is experimental, but should support CPU instances at lower fps.
+          - time-window-sync:
+              Same as `time-window`, but limits the emission of new frames if the network
+              reports being flow-limited or congestion-limited.
+              This strategy is experimental, but should support CPU instances at lower fps.
+      </description>
+    </key>
+
+    <key name="framebuffer-readers" type="as">
+      <default>[]</default>
+      <summary>Framebuffer readers</summary>
+      <description>Specifies the name of the framebuffer readers to use. An empty list enables all
+      framebuffer readers. Windows framebuffer readers are ['idd', 'desktopduplication',
+      'gdi']. Linux framebuffer readers are ['nvfbc', 'xcb'].
+      </description>
+    </key>
+
+    <key name="frames-in-transit" type="(uu)">
+      <default>(2, 4)</default>
+      <summary>Default minimum and maximum frames in transit</summary>
+      <description>Sets the allowed range for the number of frames that are sent over the wire
+      before waiting for acknoledgement.</description>
+    </key>
+
+    <key name="frame-queue-weights" type="(uuu)">
+      <default>(0, 0, 0)</default>
+      <summary>Display channel queue weights</summary>
+      <description>Sets weights used for the different frame types to tune the display channel.
+      If the provided value is (0,0,0), the frame-queue-weights parameters will be set to (5,3,1)
+      in case hardware-accelerated encoding is present, and to (8,3,1) otherwise.
+      </description>
+    </key>
+
+    <key name="full-frame-threshold" type="(uu)">
+      <default>(3, 3)</default>
+      <summary>Set minimum threshold (percentage) for using full-frame encoder</summary>
+      <description>Fullframe encoder is used if the percentage of reported dirty blocks is bigger than this threshold,
+      otherwise the tile encoder is used. The first number is used if software encoding is in use,
+      while the second is used if a hardware encoder is present.</description>
+    </key>
+
+    <key name="grabber-target" enum="com.nicesoftware.dcv.DcvGrabberTarget">
+      <default>'auto'</default>
+      <summary>Grabber target</summary>
+      <description>
+        Controls memory residency and processing of the framebuffer reader buffers.
+        Allowed values: 'system', 'gpu', 'auto'.
+        'system' means 'keep the buffers on system memory (RAM)'.
+        'gpu' means 'keep the buffers on GPU memory'.
+        'auto' will use 'gpu' if the machine supports it, otherwise it will fallback to 'system'.
+        This setting is reloaded each time a new monitor is added.
+        This setting has effect only if 'desktopduplication' framebuffer reader is used.
+      </description>
+    </key>
+
+    <key name="grabber-target-fps" type="u">
+      <default>0</default>
+      <summary>Target frames per second of frame grabber</summary>
+      <description>Sets the upper limit to grab frames per second. A value of 0 defaults to the standard behavior
+      of each specific frame buffer reader, e.g. fallback to target-fps or don't limit grabbing.
+      Not all frame capture backends honor this setting.
+      </description>
+    </key>
+
+    <key name="layout-managers" type="as">
+      <default>[]</default>
+      <summary>Display layout managers</summary>
+      <description>Specifies the name of the layout managers to use. An empty list enables all
+      layout managers. Windows layout managers are ['nvapi', 'virtualxddm', 'amd', 'dts', 'dod', 'winapi', 'idd'].
+      Linux layout managers are ['xrandr']. </description>
+    </key>
+
+    <key name="max-compressor-threads" type="u">
+      <range min="1" max="24" />
+      <default>4</default>
+      <summary>Max compressor threads</summary>
+      <description>Specifies the maximum number of compressor threads.</description>
+    </key>
+
+    <key name="max-head-resolution" type="(uu)">
+      <default>(4096, 2160)</default>
+      <summary>Max head resolution</summary>
+      <description>Sets the maximum resolution of a display head requestable by the client. A
+      display head is equivalent to a host monitor. The setting is reloaded at each client layout
+      request. When a bigger head resolution is requested by a client, the server adjusts the
+      resolution to make sure that it matches the maximum width and height values set by this
+      option.</description>
+    </key>
+
+    <key name="min-head-resolution" type="(uu)">
+      <default>(640, 480)</default>
+      <summary>Min head resolution</summary>
+      <description>Sets the minimum resolution of a display head requestable by the client. A
+      display head is equivalent to a host monitor. The setting is reloaded at each client layout
+      request. When a smaller resolution is requested by a client, the server adjusts the resolution
+      to make sure that it matches the minimum width and height values set by this
+      option.</description>
+    </key>
+
+    <key name="max-layout-area" type="u">
+      <default>0</default>
+      <summary>Max layout area in pixels</summary>
+      <description>Sets the maximum area in pixels of a display layout requestable by the client.
+      Layouts that are larger than this limit will be ignored.
+      This maximum is meant to provide an upper bound to the amount of display data that
+      must be sent, without providing constraints on the display layout geometry.
+      If set to 0, no limit is applied to layout area.
+      The setting is reloaded at each client layout request.</description>
+    </key>
+
+    <key name="max-num-heads" type="q">
+      <default>4</default>
+      <summary>Max number of heads</summary>
+      <description>Specifies the maximum number of display heads requestable by the client. A display head is
+      equivalent to a host monitor. The setting is reloaded at each client layout request. When a greater number of heads
+      is requested by a client, the server adjusts the number of heads so that the value does not exceed the value set by
+      this option.
+      </description>
+    </key>
+
+    <key name="qu-bandwidth" type="u">
+      <default>2</default>
+      <summary>Bandwidth cap for quality updates</summary>
+      <description>Specifies how much to fragment quality updates.  A higher value means quality
+      updates are less fragmented and complete faster, but could stall real updates.  A value of 0
+      means no limit, so all unchanged parts of the screen are sent as quality updates.  The value
+      is specified in MBit.</description>
+    </key>
+
+    <key name="quality" type="(ii)">
+      <default>(30, 80)</default>
+      <summary>Default minimum and maximum image quality</summary>
+      <description>Specifies minimum and maximum limits for the image quality range. Use integers
+      between 1 and 100.</description>
+    </key>
+
+    <key name="quic-frames-in-transit" type="(uu)">
+      <default>(12, 16)</default>
+      <summary>Default minimum and maximum frames in transit for QUIC connection</summary>
+      <description>Sets the allowed range for the number of frames that are in transit.</description>
+    </key>
+
+    <key name="quic-incomplete-frame-slices" type="u">
+      <range min="0" max="8" />
+      <default>4</default>
+      <summary>Default number of constrained slices used for incomplete frames with QUIC connection </summary>
+      <description>
+        Sets the number of constrained slices used to encode the frame. In this way, individual slices
+        may be dropped by quic transport in place of the entire frame. When a slice is dropped, the
+        relative region is blocked until the frame is recovered. If this value is 0, only the entire
+        frame can be dropped and the number of not-contrained slices is used instead. This value is
+        considered only if constrained encoding is supported by the video encoder.
+      </description>
+    </key>
+
+    <key name="quic-persistent-frames" type="y">
+      <default>4</default>
+      <summary>Default number of persistent video frames to update static regions with QUIC connection</summary>
+      <description>
+        Sets the number of persistent frames to define image quality even if the image content doesn't
+        change between frames. Static areas are encoded multiple times to let the h.264 stream define the
+        image quality over time. With UDP transport, the video bitrate may be decreased to control network
+        congestion. Persistent frames can be used to reduce the differencies in image quality between h.264
+        and lossless QUs, in particular when the video quality is low. Note that high values of persistent
+        frames may shadow actual QUs.
+      </description>
+    </key>
+
+    <key name="quic-constant-framerate" type="b">
+      <default>true</default>
+      <summary>Force framerate to be always equals to target fps</summary>
+      <description>
+          Enable persistent frames and use them to produce the exact number of frames per second suggested
+          by target fps. If the desktop screen doesn't change, then frames are encoded at target fps speed
+          for 200 ms. The const frame rate is "application agnostic", so if the application generates less
+          frames per second, (i.e. 15 fps) the encoding frame rate is still maintained at target fps speed
+          (i.e. 60 fps). This setting can be used in those UDP transmissions where the frame rate cannot be
+          irregular. If enabled, quic-persistent-frames has no effect and const fps is used instead.
+      </description>
+    </key>
+
+    <key name="quic-adapt-fps-to-bitrate" type="b">
+      <default>false</default>
+      <summary>Adapt the framerate to the network conditions in order to save image quality</summary>
+      <description>
+          Specifies whether to reduce the framerate to reach the bitrate instead of reducing quality. If
+          enabled, the framerate is decreased when the GCC (or target) bitrate is under a min threshold in bps
+          calculated by the encoder with the screen area and the target fps, while the new fps is calculated
+          as target_fps * min_threshold / target_bitrate. The min threshold is calculated by the encoder to
+          reach the best quality with the selected codec. For instance, the min threshold with nvenc at 60 fps
+          in Full HD is (1920 * 1080 / 25) * 60 = 4.97 Mbps. It can be used along constant-framerate: in this
+          case, the framerate is still "constant" (application agnostic) but reduced when the bitrate is under
+          the min threshold.
+      </description>
+    </key>
+
+      <key name="target-fps" type="i">
+      <default>-1</default>
+      <summary>Target frames per second</summary>
+      <description>Specifies the maximum allowed frames per second. A value of 0 means no limit.
+      A value of -1 means that the target-fps value will be determined according to the server
+      characteristics and the session type. With versions &lt; 2020.2, the -1 value is not
+      recognized and the default value is 25.
+      </description>
+    </key>
+
+    <key name="tcp-persistent-frames" type="y">
+      <default>0</default>
+      <summary>Default number of persistent video frames to update static regions with TCP/WS connection</summary>
+      <description>
+        Sets the number of persistent frames to define image quality even if the image content doesn't
+        change between frames. Static areas are encoded multiple times to let the h.264 stream define the
+        image quality over time. This can be done with TCP/WS to reduce the differencies in image quality
+        between h.264 and lossless QUs. Note that high values of persistent frames may shadow actual QUs.
+      </description>
+    </key>
+
+    <key name="use-grabber-dirty-region" type="b">
+      <default>true</default>
+      <summary>Whether to use dirty regions</summary>
+      <description>Specifies whether to use dirty screen regions. If enabled, the grabber tries to
+      compute new frames out of the dirty regions from the screen.</description>
+    </key>
+
+    <key name="web-client-max-head-resolution" type="(uu)">
+      <default>(1920, 1080)</default>
+      <summary>Max head resolution for web client</summary>
+      <description>
+        Sets the maximum resolution of a display head requestable by a web client. A display head is
+        equivalent to a host monitor. The setting is reloaded at each client layout request. This
+        setting is ignored in case the web client is setting the max resolution explicitly. The
+        max-head-resolution limitations option is applied on top of the max width and height values
+        set by this option. In case the value is set to (0, 0), it is ignored.
+      </description>
+    </key>
+
+    <key name="window-tracker-process-blacklist" type="as">
+      <default>[]</default>
+      <summary>Processes to ignore from window tracking</summary>
+      <description>
+        Deprecated: use 'window-tracker-process-denylist'.
+      </description>
+    </key>
+
+    <key name="window-tracker-process-denylist" type="as">
+      <default>[]</default>
+      <summary>Processes to ignore from window tracking</summary>
+      <description>
+        Specifies the name of the processes to ignore from window tracking. If the option is not set,
+        DCV does not ignore any processes other than the default deny list of processes defined internally.
+      </description>
+    </key>
+
+    <key name="window-tracker-winclass-regex-denylist" type="as">
+      <default>[]</default>
+      <summary>Window class regexes to ignore from window tracking</summary>
+      <description>
+        Specifies a list of regexes representing the window class ids to ignore from window tracking.
+      </description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.display.linux" path="/com/nicesoftware/dcv/display/linux/" gettext-domain="dcv">
+
+    <key name="gl-displays" type="as">
+      <default>[':0.0']</default>
+      <summary>3D accelerated X displays</summary>
+      <description>Specifies the list of local 3D accelerated X displays and screens used by DCV for
+      OpenGL rendering in virtual sessions. If this value is missing, you can't run OpenGL
+      applications in virtual sessions. This setting is ignored for console sessions.
+      </description>
+    </key>
+
+    <key name="output-refresh-rate" type="u">
+      <default>0</default>
+      <summary>CRTC output refresh rate</summary>
+      <description>Sets the CRTC output refresh rate. A value of 0 means the default value will be used.
+      Normally this value will be 60HZ. By setting this value the compositor will refresh the screen
+      at the rate specified, which for the case of gnome-shell can mean that it would change the
+      FPS at which it draws on screen.</description>
+    </key>
+
+    <key name="skip-dirty-region-vendors" type="as">
+      <default>['nvidia', 'ati']</default>
+      <summary>Whether to skip dirty regions if the specified vendors are found</summary>
+      <description>If one of the specified GPU vendors is found on the system the dirty regions
+      will be disabled to avoid known problems with XDamage.
+      If the option is not set, DCV will not probe the GPU vendors.
+      </description>
+    </key>
+
+    <key name="use-glx-fallback-provider" type="b">
+      <default>false</default>
+      <summary>Whether to use the GLX fallback provider</summary>
+      <description>Enables the use of the custom GLX provider from Xdcv, which has the hardcoded
+      fbconfigs required by DCV-GL.
+      </description>
+    </key>
+
+    <key name="use-shm-pixmaps" type="b">
+      <default>true</default>
+      <summary>Whether to use shared memory pixmaps if supported</summary>
+      <description>If pixmaps is supported by the X server, uses shared memory pixmaps to grab the
+      screen.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.display.x264" path="/com/nicesoftware/dcv/display/x264/" gettext-domain="dcv">
+
+    <key name="debug-macroblock-propagation" type="b">
+      <default>false</default>
+      <summary>Check the updated macroblock map (only for debugging purposes)</summary>
+      <description>(libx264 encoder only). Check whether libx264 actually complied with the requested P_SKIP
+      hints or not. This a performance impact, enable it only for DEBUGGING purposes.
+      </description>
+    </key>
+
+    <key name="enable-macroblock-propagation" type="b">
+      <default>true</default>
+      <summary>Enable passing the diffmap data to the libx264 encoder</summary>
+      <description>(libx264 encoder only). Enables passing the information about which macroblocks
+      have changed according to the diffmap down to libx264 to generate P_SKIP macroblocks
+      accordingly.</description>
+    </key>
+
+    <key name="preset" enum="com.nicesoftware.dcv.DcvX264EncoderPreset">
+      <default>'ultrafast'</default>
+      <summary>libx264 encoder preset (when available)</summary>
+      <description>Sets the encoding preset.</description>
+    </key>
+
+    <key name="threads" type="u">
+      <default>0</default>
+      <summary>Thread count</summary>
+      <description>Sets the thread count. A value of 0 means automatic setting chosen by x264
+      depending on the core availability. This setting is experimental and might be removed in the
+      future.</description>
+    </key>
+
+    <key name="x264opts" type="a{ss}">
+      <default>{}</default>
+      <summary>libx264 options</summary>
+      <description>Sets the encoding options of libx264 library for both the FFMPEG and the libx264 encoders.
+       Example value: {'cabac':'0', 'trellis':'0'} </description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.ec2" path="/com/nicesoftware/dcv/ec2/" gettext-domain="dcv">
+
+    <key name="disable-metadata-service-token" type="b">
+      <default>false</default>
+      <summary>Disable instance metadata service token</summary>
+      <description>Disables the instance metadata service token. This is used in order to use the V2
+      of the instance metadata.</description>
+    </key>
+
+    <key name="instance-metadata-mode" enum="com.nicesoftware.dcv.DcvEC2MetadataMode">
+      <default>'auto'</default>
+      <summary>Use EC2 instance metadata mode</summary>
+      <description>Uses Amazon EC2 instance metadata mode to generate the instance ID to be used in
+      the metrics. The possible values are: 'ignore' to not connect to the instance metadata, 'use'
+      to always try to connect to the instance metadata, and 'auto' to autodetect if it is under an
+      Amazon EC2 instance and then connect to the instance metadata.</description>
+    </key>
+
+    <key name="use-rlm-licensing" type="b">
+      <default>false</default>
+      <summary>Use RLM licensing on EC2</summary>
+      <description>Disables the automatic licensing granted when using an Amazon EC2 instance.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.filestorage" path="/com/nicesoftware/dcv/filestorage/" gettext-domain="dcv">
+
+    <key name="storage-root" type="s">
+      <default>''</default>
+      <summary>Path to file storage root folder</summary>
+      <description>Specifies a path to the folder to be used as the root folder for file storage
+      operations. If the storage-root is empty or the folder does not exist, the file storage is
+      disabled. Deprecated: use 'storage-root' of section
+      'session-management/automatic-console-session'.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.input" path="/com/nicesoftware/dcv/input/" gettext-domain="dcv">
+
+    <key name="autorepeat-mode" enum="com.nicesoftware.dcv.DcvAutorepeatMode">
+      <default>'sync-only'</default>
+      <summary>Behaviour of autorepeat on Linux</summary>
+      <description>Specifies the behaviour of autorepeat on Linux. Possible values: 'always-on' (delay the keyup for every key in every condition),
+      'sync-only' (enable autorepeat only for the key combinations where the client and server keyboard layouts matches), or 'disabled'
+      (disable autorepeat).</description>
+    </key>
+
+    <key name="enable-autorepeat" type="b">
+      <default>true</default>
+      <summary>Whether to allow autorepeat on Linux</summary>
+      <description>Specifies whether to allow autorepeat for a single key.</description>
+    </key>
+
+    <key name="enable-gamepad" type="b">
+      <default>true</default>
+      <summary>Whether to allow gamepad input</summary>
+      <description>Specifies whether gamepad is enabled.</description>
+    </key>
+
+    <key name="enable-rdp-scancodes" type="b">
+      <default>false</default>
+      <summary>Whether to allow scan codes for RDP proxy</summary>
+      <description>Enable keyboard scan codes for RDP proxy. It works only with US keyboard on RDP server.</description>
+    </key>
+
+    <key name="enable-relative-mouse" type="b">
+      <default>true</default>
+      <summary>Whether to allow relative mouse movements</summary>
+      <description>Specifies whether to allow relative mouse movements.</description>
+    </key>
+
+    <key name="enable-stylus" type="b">
+      <default>true</default>
+      <summary>Whether to allow stylus input</summary>
+      <description>Specifies whether a stylus is enabled.</description>
+    </key>
+
+    <key name="enable-touch" type="b">
+      <default>true</default>
+      <summary>Whether to allow touch input</summary>
+      <description>Specifies whether touch is enabled.</description>
+    </key>
+
+    <key name="mouse-pacing-interval" type="u">
+      <default>0</default>
+      <summary>The pacing for mouse move events injection on Windows</summary>
+      <description>
+        Specifies the interval in millisecond at which the mouse move events are injected.
+        This feature is currently implemented only on Windows.
+        If multiple events are present in an interval, only the most recent one is injected.
+        A 0 value disables the feature and all mouse events are injected as soon as they are received by the server.
+      </description>
+    </key>
+
+    <key name="mouse-wheel-sensitivity" type="u">
+      <default>300</default>
+      <summary>Sensitivity threshold for mouse wheel on Linux</summary>
+      <description>Specifies the sensitivity of mouse wheel scrolling on Linux. An higher value means a slower scroll.</description>
+    </key>
+
+    <key name="sync-lock-keys" enum="com.nicesoftware.dcv.DcvLockKeysSyncMode">
+      <default>'all-keys'</default>
+      <summary>Whether to sync lock keys</summary>
+      <description>Specifies whether to sync lock keys with the client. Possible values: "disabled", "pressed-lock-key", "all-keys".</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.license" path="/com/nicesoftware/dcv/license/" gettext-domain="dcv">
+
+    <key name="license-file" type="s">
+      <default>''</default>
+      <summary>License</summary>
+      <description>Specifies the licenses to use for DCV server when running on non-EC2
+      instances. Licensing is granted through RLM licenses. It can contain a list of license
+      specifications, separated by ';' on Windows, and separated by ':' on Linux. Each license
+      specification can be a local license file for extended evaluation licenses, or an RLM server
+      port and hostname specified in the format PORT@HOSTNAME for floating licenses. In case
+      multiple licenses are specified, the server will try each one in turn until the first one is
+      validated (e.g. the license file is correctly recognized or the remote RLM server could be
+      contacted). If no value is specified, the server will look for the default license file
+      '/usr/share/license/license.lic' on Linux, 'C:\Program Files\NICE\DCV\Server\license\license.lic'
+      on Windows; in case the default license file is not found, a demo license is used. This
+      parameter is ignored on EC2 instances.
+      </description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.log" path="/com/nicesoftware/dcv/log/" gettext-domain="dcv">
+
+    <key name="directory" type="s">
+      <default>''</default>
+      <summary>Log output directory</summary>
+      <description>Specifies the destination to which logs are saved. If not specified it defaults
+      to "C:\ProgramData\NICE\DCV\log\" on Windows and to "/var/log/dcv/" on Linux.
+      </description>
+    </key>
+
+    <key name="enable-image-audit" type="b">
+        <default>false</default>
+        <summary>Enables content auditing of transferred images</summary>
+        <description>
+            Specifies if the content of any transferred images has to be saved in a separate file.
+            The images will be stored in a log subdirectory and the filename will be reported in the audit
+            CSV file. If transfer-audit is disabled, the value is ignored.
+        </description>
+    </key>
+
+    <key name="level" type="s">
+      <default>'info'</default>
+      <summary>Log level</summary>
+      <description>Specifies the log file verbosity level. The verbosity levels (in order of the
+      amount of detail they provide) are: 'error', 'warn', 'info', and 'debug'.
+      The new value is effective as soon as it is changed on the configuration and propagated to the
+      DCV agent processes. With versions &lt;= 2019.1, the log level on the DCV agent processes is
+      only set when they start.</description>
+    </key>
+
+    <key name="max-file-size" type="u">
+      <default>0</default>
+      <summary>Maximum log file size in MegaBytes before rotation</summary>
+      <description>Specifies the maximum log file size before a rotation is triggered.
+      If the value is '0', rotation by size is disabled, and instead files are rotated
+      when the process generating them is restared.</description>
+    </key>
+
+    <key name="rotate" type="u">
+      <default>10</default>
+      <summary>Number of log file rotations</summary>
+      <description>Specifies the number of times that log files are rotated before being removed. If
+      the value is 0, old versions are removed rather than rotated.</description>
+    </key>
+
+    <key name="rotation-interval" enum="com.nicesoftware.dcv.DcvRotationInterval">
+      <default>'none'</default>
+      <summary>The maximum time interval between two successive log file rotations</summary>
+      <description>Specifies the maximum time interval between two successive log file rotations.
+      If the value is 'none', files are not rotate based on time. Other possible values
+      are 'every-minute', 'every-twenty-minutes', 'every-hour' and 'every-day'.</description>
+    </key>
+
+    <key name="rotation-suffix" enum="com.nicesoftware.dcv.DcvRotationSuffix">
+      <default>'counter'</default>
+      <summary>The suffix to be appended to a rotated log file</summary>
+      <description>Specifies the suffix to be appended to the rotated log file. In case
+      'counter' is specified, a simple increasing counter suffix is appended to each rotated log file.
+      In case 'timestamp' is specified, a timestamp of the form 'YYYY-MM-DD-HH-MM' is applied to the log
+      file. In case a rotated file with that timestamp already exists in the log folder, an additional
+      numeric counter is appended to the timestamp.</description>
+    </key>
+
+    <key name="show-window-tracker-details" type="b">
+      <default>false</default>
+      <summary>Show additional debug details about tracked windows</summary>
+      <description>Shows additional debug details about tracked windows like: window class id,
+      process name, and window name.</description>
+    </key>
+
+    <key name="transfer-audit" enum="com.nicesoftware.dcv.DcvAuditFlags">
+      <default>'none'</default>
+      <summary>Transfer direction to audit</summary>
+      <description>Specifies which transfer direction to audit. If this parameter is enabled, a new
+      CSV file logs transfers between the server and clients. The allowed values are: 'none',
+      'server-to-client', 'client-to-server', and 'all'. If this value is missing or equal to
+      'none', transfer audits are disabled and no file is created.</description>
+    </key>
+
+    <key name="quic-network-stats-interval" type="u">
+      <default>60000</default>
+      <summary>Granularity for the QUIC statistics</summary>
+      <description>
+      The sampling period (in ms) for QUIC-related statistics, GCC controller
+      statistics, including network state transitions,
+      packet groups received, average packet group size, and network delay.
+      Default value: 60000 (60 s).
+      </description>
+    </key>
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.metrics" path="/com/nicesoftware/dcv/metrics/" gettext-domain="dcv">
+
+    <key name="reporters" type="as">
+      <default>[]</default>
+      <summary>Metrics reporters</summary>
+      <description>Specifies the name of the metrics reporters to use. The current values include:
+      'carbon', 'console', 'logfile' and 'jsonlogfile'. If this value is missing, metrics are not
+      reported.</description>
+    </key>
+
+    <key name="enable-performance-counters" type="b">
+      <default>true</default>
+      <summary>Publish performance counters on Windows</summary>
+      <description>Enables publishing DCV metrics as performance counters.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.metrics.carbon" path="/com/nicesoftware/dcv/metrics/carbon/" gettext-domain="dcv">
+
+    <key name="prefix" type="s">
+      <default>'dcvserver'</default>
+      <summary>Carbon metrics prefix</summary>
+      <description>Specifies the prefix assigned to each carbon server metric.</description>
+    </key>
+
+    <key name="server-address" type="s">
+       <default>'localhost'</default>
+       <summary>Carbon server address</summary>
+       <description>Specifies the carbon server address.</description>
+    </key>
+
+    <key name="server-port" type="q">
+      <default>2003</default>
+      <summary>Carbon server port</summary>
+      <description>Specifies the carbon server TCP port.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.metrics.jsonlogfile" path="/com/nicesoftware/dcv/metrics/jsonlogfile/" gettext-domain="dcv">
+
+    <key name="max-reports" type="u">
+      <default>10</default>
+      <summary>Maximum number of reports written before file rotation</summary>
+      <description>Specifies the maximum number of reports written in the json log file before
+      rotation. If the value is 0, no file rotation will be performed.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.qi" path="/com/nicesoftware/dcv/qi/" gettext-domain="dcv">
+
+    <key name="client-time-thresholds" type="(ii)">
+      <default>(60, 120)</default>
+      <summary>Thresholds of the client processing time quality indicator</summary>
+      <description>Specifies the thresholds of the client processing time quality indicator (in
+      milliseconds). The first number is the warning threshold, while the second is the critical
+      threshold.</description>
+    </key>
+
+    <key name="display-latency-thresholds" type="(ii)">
+      <default>(150, 300)</default>
+      <summary>Thresholds of the display latency quality indicator</summary>
+      <description>Specifies the thresholds for the display latency quality indicator (in
+      milliseconds). The first number is the warning threshold, while the second is the critical
+      threshold.</description>
+    </key>
+
+    <key name="frame-loss-thresholds" type="(ii)">
+      <default>(33, 66)</default>
+      <summary>Thresholds of the frame loss quality indicator</summary>
+      <description>Specifies the thresholds of the frame loss quality indicator (as
+      percentages). The first number is the warning threshold, while the second is the critical
+      threshold.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.rdpproxy" path="/com/nicesoftware/dcv/rdpproxy/" gettext-domain="dcv">
+
+    <key name="connection-timeout" type="u">
+      <default>0</default>
+      <summary>RDP connection timeout</summary>
+      <description>Specifies the amount of time (in seconds) to activate the RDP connection.
+      If missing or zero the FreeRDP default value of 9 seconds will be used.</description>
+    </key>
+
+    <key name="default-resolution" type="(uu)">
+      <default>(1280, 720)</default>
+      <summary>Default resolution</summary>
+      <description>Specifies the initial default resoultion used when the first connection has been established.</description>
+    </key>
+
+    <key name="freerdp-settings" type="a{si}">
+      <default>{}</default>
+      <summary>Override FreeRDP settings</summary>
+      <description>Replaces the default values of FreeRDP client settings using the provided values.
+       Example value: {'PAR1':1, 'PAR2':0, 'PAR3':9} </description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.printer" path="/com/nicesoftware/dcv/printer/" gettext-domain="dcv">
+
+    <key name="file-printer-name" type="s">
+      <default>'DCV Printer'</default>
+      <summary>Name of the virtual DCV Printer for file download</summary>
+      <description>
+        String representing the name of the virtual DCV Printer on a DCV server.
+
+        In Linux, this value is read from the configuration every time a new Linux DCV session is created.
+        If this setting is non-empty, and has string PREFIX as value, a new virtual printer with name 'PREFIX - SESSION-NUMBER'
+        will be registered in CUPS. If this setting is empty, no DCV virtual printer will be registered.
+
+        In Windows, this setting is used to change the default printer on the system. If set to an empty string,
+        DCV will not change the current default printer.
+      </description>
+    </key>
+
+    <key name="use-default-printer" enum="com.nicesoftware.dcv.DcvFeatureSetting">
+       <default>'client-decides'</default>
+       <summary>Decides how the default printer gets set</summary>
+       <description>
+         Server decides which printer to set as default printer.
+         Accepted values are 'client-decides', 'always-on', 'always-off'.
+         If the value for this setting is 'always-off', the server does not set any printer as default.
+         If the value is 'always-on', sets the printer that is specified in the setting 'file-printer-name' under section 'printer'.
+         If the value is 'client-decides', the default printer sent from the client is set.
+         If no default printer is sent by the client, the printer specified in 'file-printer-name' under section 'printer' is set.
+         The default value is 'client-decides'.
+         Currently supported only on windows.
+       </description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.redirection" path="/com/nicesoftware/dcv/redirection/" gettext-domain="dcv">
+
+    <key name="allow-multiple-clients" type="b">
+      <default>false</default>
+      <summary>Whether to allow multiple clients to use redirection on the same session</summary>
+      <description>
+        Allows or denies multiple clients to concurrently use the redirection feature
+        on the same session. The default value is 'false' and then the redirection feature
+        can be used only by one client at the time.
+      </description>
+    </key>
+
+    <key name="blacklisted-drive-letters" type="u">
+      <default>0</default>
+      <summary>Bitmask representing the denied disk drive letters</summary>
+      <description>
+        Deprecated: use 'drive-letters-denylist'.
+      </description>
+    </key>
+
+    <key name="drive-letters-denylist" type="u">
+      <default>0</default>
+      <summary>Bitmask representing the denied disk drive letters</summary>
+      <description>Sets the bitmask representing the disk drive letters that can not be
+      used on drive mount. Bit position 0 (the least-significant bit) is drive A, bit position 1 is
+      drive B, bit position 2 is drive C, and so on. The default value is 0 and then all drive
+      letters are available. This value is read from the configuration every time a drive is
+      mounted.
+      </description>
+    </key>
+
+    <key name="enable-file-cache" type="b">
+      <default>true</default>
+      <summary>Enable the caching on filesystem operations</summary>
+      <description>
+        Enables the caching on filesystem operations to improve performance.
+      </description>
+    </key>
+
+    <key name="enable-printer-redirection" type="b">
+      <default>true</default>
+      <summary>Enable the printer redirection functionality</summary>
+      <description>
+          Enables the printer redirection functionality on server side. When set to false,
+          all printer redirection requests coming from clients are ignored.
+      </description>
+    </key>
+
+    <key name="enable-timezone-redirection" enum="com.nicesoftware.dcv.DcvFeatureSetting">
+       <default>'client-decides'</default>
+       <summary>Allow or deny time zone redirection from client to server</summary>
+       <description>
+         Allows or denies time zone to be redirected from client to server.
+         Accepted values are: 'always-on', 'always-off' and 'client-decides'.
+         If it is set to 'always-on', priority user client will send its time zone to the
+         server and that becomes the time zone of the server.
+         If it is set to 'always-off', the server will display its own time zone to the
+         clients. Any client time zone message will be discarded.
+         If it is set to 'client-decides', priority user client can send its time zone to
+         the server and that becomes the time zone of the server. The client can choose
+         not to send its time zone to the server.
+         The default value is 'client-decides'.
+       </description>
+    </key>
+
+    <key name="restore-timezone-on-disconnection" type="b">
+      <default>true</default>
+      <summary>Restore timezone on server automatically on disconnection</summary>
+      <description>
+        When this setting is enabled and timezone has been redirected on the server, the latter will be
+        restored to the original when the number of active connections drops to zero.
+        The timezone original value is the one retrieved on the server before a client changes it for the
+        first time with redirection.
+        Please note, the timezone will be restored on client's will (when it turns the redirection off)
+        regardless of this setting.
+      </description>
+    </key>
+
+    <key name="redirected-printer-name-suffix" type="s">
+      <default>'Redirected'</default>
+      <summary>Suffix for redirected printer names</summary>
+      <description>
+        Sets a string which represents the suffix that is added to the name of redirected printers on the DCV server.
+        This value is read from the configuration every time the server receives a printer configuration update
+        (e.g., a new local printer is added).
+        This suffix is appended in the form 'PRINTER_NAME - SUFFIX'.
+        An empty suffix is not accepted and is replaced by the default value.
+      </description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.security" path="/com/nicesoftware/dcv/security/" gettext-domain="dcv">
+
+    <key name="administrators" type="as">
+      <default>[]</default>
+      <summary>Users that can control DCV through the cli and RPC API</summary>
+      <description>Users in this list can control all DCV sessions and connections.
+      In particular, they can create console sessions, create virtual sessions
+      with another user as username, and list all current sessions independently
+      of their username. This setting is available only on Linux, and it is read
+      on every new RPC connection.
+      </description>
+    </key>
+
+    <key name="allowed-http-host-regex" type="s">
+      <default>'^.+$'</default>
+      <summary>Allowed host regular expression</summary>
+      <description>Specifies a regular expression pattern representing the host names that this DCV
+      server can serve. If the Host header of an incoming HTTP request does not match this pattern,
+      the request itself fails with a 403 Forbidden status code. This is a security measure to
+      prevent HTTP Host header attacks. The pattern must be a valid Javascript-like regular
+      expression. Letters in the pattern match both uppercase and lowercase letters. Example:
+      '^(www\.)?example\.com$'.</description>
+    </key>
+
+    <key name="allowed-ws-origin-regex" type="s">
+      <default>'^https://.+$'</default>
+      <summary>Allowed origins</summary>
+      <description>Specifies a regular expression pattern representing the origins that this DCV
+      server accepts. When establishing a WebSocket connection, the Origin header field in the
+      client's handshake indicates the origin of the script establishing the connection. If the
+      Origin header of an incoming HTTP request does not match this pattern, the request itself
+      fails with a 403 Forbidden status code. This is a security measure to prevent cross-site
+      WebSocket hijacking (CSWSH) attacks. The pattern must be a valid Javascript-like regular
+      expression. Letters in the pattern match both uppercase and lowercase letters. The Origin
+      header has the form: &lt;scheme&gt; "://" &lt;host&gt; [ ":" &lt;port&gt; ]. Example:
+      '^https://(www\.)?example\.com(:443)?$'.</description>
+    </key>
+
+    <key name="auth-connection-setup-timeout" type="u">
+      <default>120</default>
+      <summary>Authentication channel connection setup timeout</summary>
+      <description>Specifies the amount of time (in seconds) allowed for the authentication channel
+      connection setup procedure to be completed before timing out. If the procedure takes more,
+      then the channel is closed. If set to 0, the authentication channel connection setup timeout
+      is disabled.</description>
+    </key>
+
+    <key name="auth-token-verifier" type="s">
+      <default>''</default>
+      <summary>The endpoint of the authentication token verifier</summary>
+      <description>Specifies the endpoint (URL) of the authentication token verifier used by the DCV
+      server. If empty, the internal authentication token verifier is used.</description>
+    </key>
+
+    <key name="auth-token-verifier-timeout" type="u">
+      <default>100</default>
+      <summary>The timeout (in seconds) for the authentication token verifier.</summary>
+      <description>Specifies the time (in seconds) to wait for the authentication token verifier used by the DCV
+      server.</description>
+    </key>
+
+    <key name="auth-token-ttl" type="u">
+      <default>900</default>
+      <summary>Expiration time for auth tokens</summary>
+      <description>
+        Sets the expiration time in seconds for auth tokens obtained from the internal authenticator.
+        If set to 0, auth tokens never expire.
+      </description>
+    </key>
+
+    <key name="authentication" enum="com.nicesoftware.dcv.DcvAuthenticationMode">
+      <default>'system'</default>
+      <summary>Authentication method</summary>
+      <description>Specifies the client authentication method used by the DCV server. Use 'system'
+      to delegate client authentication to the underlying operating system. Use 'none' to disable
+      client authentication and grant access to all clients.</description>
+    </key>
+
+    <key name="authentication-threshold" type="u">
+      <default>3</default>
+      <summary>Authentication threshold</summary>
+      <description>Specifies how many times each client can fail authentication before the
+      connection is closed by the server. To allow unlimited authentication attempts, use
+      0.</description>
+    </key>
+
+    <key name="backend-authentication" flags="com.nicesoftware.dcv.DcvBackendAuthenticationFlags">
+      <default>['user', 'path']</default>
+      <summary>Backend authentication methods</summary>
+      <description>Specifies the set of methods used by the DCV server to authenticate the agent
+      connection. Allowed values are: 'user' to check the active user of a console sesison of the
+      running user of a virtual session; 'path' to check the real path of the agent process.
+      Use an empty list, or 'none' to disable the authentication. Default value ['user', 'path'].
+      </description>
+    </key>
+
+    <key name="backend-authentication-timeout" type="u">
+      <default>5000</default>
+      <summary>The timeout in milliseconds for requests to the session launcher</summary>
+      <description>
+        Sets the period (in milliseconds) to wait before the dbus connection times out for
+        requests to the session launcher (for agent authentication).
+      </description>
+    </key>
+
+    <key name="ca-file" type="s">
+      <default>''</default>
+      <summary>CA file</summary>
+      <description>Specifies the file containing the certificate authorities (CAs) trusted by the
+      DCV server. If empty, use the default trust store provided by the system.</description>
+    </key>
+
+    <key name="certificate-to-user-file" type="s">
+      <default>''</default>
+      <summary>Certificate to user mapping file</summary>
+      <description>Specifies the file containing the certificate to user mapping list.</description>
+    </key>
+
+    <key name="ciphers" type="s">
+      <default>'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384'</default>
+      <summary>Cipher list used on the TLS connections</summary>
+      <description>Specifies the cipher list used on TLS connections. The cipher list must be
+      separated using the character ":" and must be supported by openssl and the
+      clients.</description>
+    </key>
+
+    <key name="connection-estab-timeout" type="u">
+      <default>5</default>
+      <summary>Connection establishment timeout</summary>
+      <description>Specifies the amount of time (in seconds) allowed for the connection procedure to
+      be completed before timing out. If the procedure takes more, then the connection is closed.
+      If set to 0, the connection establishment does not time out.</description>
+    </key>
+
+    <key name="connection-setup-timeout" type="u">
+      <default>5</default>
+      <summary>Channel connection setup timeout</summary>
+      <description>Specifies the amount of time (in seconds) allowed for the channel connection
+      setup procedure to be completed before timing out. If the procedure takes more, then the
+      channel is closed. If set to 0, the channel connection setup does not time out.</description>
+    </key>
+
+    <key name="connection-throttler-parameters" type="(uu)">
+      <default>(100, 30)</default>
+      <summary>Connection throttler configuration parameters</summary>
+      <description>
+        Sets parameters for the token bucket throttling algorithm as (Size, Rate).
+        Size is the size of the bucket.
+        Rate is the rate at which the bucket is filled in items per second.
+      </description>
+    </key>
+
+    <key name="crl-file" type="s">
+      <default>''</default>
+      <summary>CRL file</summary>
+      <description>Specifies the file containing the certificate revocation list (CRL).</description>
+    </key>
+
+    <key name="enable-authentication-throttler" type="b">
+      <default>true</default>
+      <summary>Whether to enable the authentication throttler</summary>
+      <description>
+        If enabled, the user account will be temporary locked after certain number
+        of consecutive failed login attempts and it will not be able to login in the
+        server.
+      </description>
+    </key>
+
+    <key name="enable-ovirt-sso" type="b">
+      <default>false</default>
+      <summary>Whether to own the org.ovirt.vdsm.Credentials D-Bus name for SSO</summary>
+      <description>
+        If enabled, the server will own the org.ovirt.vdsm.Credentials D-Bus name in order
+        to enable SSO with GNOME Shell without our extension. Enabling this configuration
+        is not enough for SSO, the user has to manually create a /etc/pam.d/gdm-ovirtcred
+        symlink that points to /etc/pam.d/dcv-graphical-sso.
+      </description>
+    </key>
+
+    <key name="enable-gssapi" type="b">
+      <default>false</default>
+      <summary>Enable GSSAPI SASL mechanism</summary>
+      <description>Enables or disables GSSAPI SASL mechanism, that allows DCV authentication with
+      kerberos.</description>
+    </key>
+
+    <key name="encryption" enum="com.nicesoftware.dcv.DcvEncryptionMode">
+      <default>'prefer-on'</default>
+      <summary>Encryption mode</summary>
+      <description>Enables or disables the encryption of data exchanged between the server and the
+      client. Valid values include: prefer-on, 'prefer-off', and 'always-on'. If prefer-on,
+      encryption is enabled unless it is specifically disabled by the client. If prefer-off,
+      encryption is disabled unless it is enforced by the client. If always-on, encryption is
+      enabled regardless of the client’s settings.</description>
+    </key>
+
+    <key name="max-connections-per-user" type="u">
+      <default>10</default>
+      <summary>Maximum number of user's connections</summary>
+      <description>Specifies the maximum number of allowed concurrent connections per
+      user. Exceeding connections are rejected.</description>
+    </key>
+
+    <key name="max-rpc-per-user" type="u">
+      <default>10</default>
+      <summary>Maximum number of rpc user's connections</summary>
+      <description>Specifies the maximum number of allowed concurrent connections per
+      user for RPC. Exceeding connections are rejected. If set to 0, all connections
+      are allowed.</description>
+    </key>
+
+    <key name="no-tls-strict" type="b">
+      <default>false</default>
+      <summary>Enable or disable strict certificate validation</summary>
+      <description>Enables or disables strict certificate validation when connecting to an external
+      authentication token verifier. Strict certificate validation must be disabled if the
+      authentication token verifier uses a self-signed certificate.</description>
+    </key>
+
+    <key name="os-auto-lock" type="b">
+      <default>true</default>
+      <summary>Whether to lock the OS session when last client connection ends</summary>
+      <description>If enabled, the OS session is locked when the last
+      client connection is closed.
+      </description>
+    </key>
+
+    <key name="pam-service-name" type="s">
+      <default>'dcv'</default>
+      <summary>PAM service name</summary>
+      <description>Specifies the name of the PAM configuration file used by DCV. The default PAM
+      service name is 'dcv' and corresponds with the /etc/pam.d/dcv configuration file. This
+      parameter is only used if the 'system' authentication method is used.</description>
+    </key>
+
+    <key name="pam-timeout" type="u">
+      <default>10</default>
+      <summary>PAM timeout</summary>
+      <description>Specifies the amount of time (in seconds) before DCV aborts the
+      conversation with PAM to verify the user's credentials.</description>
+    </key>
+
+    <key name="passwd-file" type="s">
+      <default>''</default>
+      <summary>Password file</summary>
+      <description>Specifies the password file to be used to check user credentials (only with dcv
+      authentication mode). If empty, use the default file in ${XDG_CONFIG_HOME}/NICE/dcv/passwd for
+      Linux, or %CSIDL_LOCAL_APPDATA%\NICE\dcv\passwd for Windows.</description>
+    </key>
+
+    <key name="rpc-throttler-parameters" type="(uu)">
+      <default>(200, 50)</default>
+      <summary>RPC throttler configuration parameters</summary>
+      <description>
+        Sets the parameters for the token bucket throttling algorithm as (Size, Rate).
+        Size is the size of the bucket.
+        Rate is the rate at which the bucket is filled in items per second.
+      </description>
+    </key>
+
+    <key name="service-name" type="s">
+      <default>'dcv'</default>
+      <summary>Service Name</summary>
+      <description>The registered name of the service (usually the protocol name).</description>
+    </key>
+
+    <key name="server-fqdn" type="s">
+      <default>''</default>
+      <summary>Server FQDN</summary>
+      <description>Specifies the server fully qualified domain name. Empty means
+      gethostname().</description>
+    </key>
+
+    <key name="supervision-control" enum="com.nicesoftware.dcv.DcvSupervisionControlMode">
+      <default>'disabled'</default>
+      <summary>The type of supervision control for the sessions</summary>
+      <description>
+        Specifies the type of supervision control for the sessions. The possible values are
+        'disabled' and 'enforced'. If this value is set to 'enforced', then unsupervised-access
+        permission can be set to allow or deny owner-less access of users in a collaborative
+        session. If unsupervised-access is allowed for a user, the user can access a session without
+        an owner. All users except the owner are denied this permission by default. When this value
+        is set to 'disabled' (default), the server does not enforce this supervision control and
+        permission. The new value is effective as soon as it is changed in the configuration.
+      </description>
+    </key>
+
+    <key name="throttler-established-timeout" type="u">
+      <default>1</default>
+      <summary>Throttler established timeout</summary>
+      <description>Specifies the amount of time (in seconds) before the transport
+      is closed, between the service connection and when the peer provides the id
+      to be used by the throttler.</description>
+    </key>
+
+    <key name="user-realm" type="s">
+      <default>''</default>
+      <summary>Server user realm</summary>
+      <description>Specifies a user realm for the server.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.session-management" path="/com/nicesoftware/dcv/session-management/" gettext-domain="dcv">
+
+    <key name="agent-env-vars" type="a{ss}">
+      <default>{}</default>
+      <summary>Additional env vars to be propagated to agent process</summary>
+      <description>Specifies the list of additional environment variables to be used for agent
+      launching. The setting is used by the Linux system agent process launched with the run-user
+      strategy. By default no additional env var is used.
+       Example value: {'ENV1':'1', ''ENV2':'2'} </description>
+    </key>
+
+    <key name="agent-launch-strategy" enum="com.nicesoftware.dcv.DcvAgentLaunchStrategy">
+      <default>'default'</default>
+      <summary>Specify the strategy used to launch the agent in console sessions</summary>
+      <description>Specifies whether to use the xdg-autostart or the legacy strategy to trigger
+      the agent launch in console sessions. Allowed values: 'xdg-autostart', 'run-user'. Default
+      value 'xdg-autostart' on RHEL8, Sles15 and Ubuntu20, 'run-user' on other distributions.</description>
+    </key>
+
+    <key name="create-session" type="b">
+      <default>false</default>
+      <summary>Create a console session at server startup</summary>
+      <description>Specifies whether to automatically create a console session (with ID "console") at server startup.</description>
+    </key>
+
+    <key name="enable-gl-in-virtual-sessions" enum="com.nicesoftware.dcv.DcvEnableFeature">
+      <default>'default-on'</default>
+      <summary>Whether to employ dcv-gl feature</summary>
+      <description>Specifies whether to use the dcv-gl feature (a license is required). Allowed
+      values: 'always-on', 'always-off', 'default-on', 'default-off'.</description>
+    </key>
+
+    <key name="force-agent-exit" type="b">
+      <default>false</default>
+      <summary>Whether to force agent termination or wait for resources to be disposed</summary>
+      <description>Specifies whether to force the agent termination with TerminateProcess or exit
+      or wait for resources to be disposed</description>
+    </key>
+
+    <key name="login-monitor-poll-interval" type="u">
+      <default>5</default>
+      <summary>The interval in seconds to periodically check the loginn monitor state</summary>
+      <description>Specifies the interval (in seconds) after which the login monitor state has to be verified. If
+      set to 0, the loginmonitor will be updated only when a system event has been detected.</description>
+    </key>
+
+    <key name="max-concurrent-sessions" type="u">
+      <default>0</default>
+      <summary>Maximum number of concurrent sessions</summary>
+      <description>Specifies the maximum number of allowed concurrent sessions. This limit currently
+      applies only to virtual sessions, because console sessions are intrinsically limited to one.
+      Specify 0 to not enforce any limit.
+      </description>
+    </key>
+
+    <key name="max-sessions-per-user" type="u">
+      <default>0</default>
+      <summary>Maximum number of sessions per user</summary>
+      <description>Specifies the maximum number of allowed concurrent sessions that each user can own. This limit
+      currently applies only to virtual sessions. Specify 0 to not enforce any limit.
+      </description>
+    </key>
+
+    <key name="max-concurrent-clients" type="i">
+      <default>-1</default>
+      <summary>Maximum number of concurrent clients per session</summary>
+      <description>Specifies the maximum number of concurrent clients per session. If set to -1, no
+      limit is enforced. To set the limit only for the automatic session, use
+      'max-concurrent-clients' of section
+      'session-management/automatic-console-session'.</description>
+    </key>
+
+    <key name="owner" type="s">
+      <default>''</default>
+      <summary>Owner of the automatically created "console" session</summary>
+      <description>Specifies the user name of the "console" session owner. If empty, the owner is the
+      user who started the DCV server. This setting is applied only to the "console" session
+      automatically created at server startup when the create-session setting is set to
+      true. Deprecated: use 'owner' of section 'session-management/automatic-console-session'.
+      </description>
+    </key>
+
+    <key name="permissions-file" type="s">
+      <default>''</default>
+      <summary>Permissions file for the automatically created "console" session</summary>
+      <description>Specifies the path of the permissions file to be used to check user access to DCV
+      features. If empty, only the owner has full access to the session. Such permissions file
+      applies only to the "console" session automatically created at server startup when the
+      create-session setting is set to true. Deprecated: use 'permissions-file' of section
+      'session-management/automatic-console-session'.
+      </description>
+    </key>
+
+    <key name="virtual-session-default-layout" type="aa{sv}">
+      <default>[]</default>
+      <summary>Default layout for virtual sessions</summary>
+      <description>
+        If this is set, Xdcv is configured to create the specified
+        layout at startup. Each monitor can be configured with resolution
+        (w,h) and position (x,y). All specified monitors are enabled.
+         Default layout example value: [{'w':&lt;800&gt;, 'h':&lt;600&gt;, 'x':&lt;0&gt;,
+        'y': &lt;0&gt;}, {'w':&lt;1024&gt;, 'h':&lt;768&gt;, 'x':&lt;800&gt;, 'y':&lt;0&gt;}] 
+        For this setting, the maximum number of monitors (specified in the virtual-session-monitors setting) has
+        more priority than the number of elements in the array. For example, if five
+        monitors have been set, but the maximum number of monitors is four, only the
+        first four monitors are created.
+        If this key is set, the number of enabled monitors (specified in the
+        virtual-session-monitors setting) is ignored.
+      </description>
+    </key>
+
+    <key name="virtual-session-font-path" type="s">
+      <default>''</default>
+      <summary>Whether to add special font paths</summary>
+      <description>Specifies the path of special fonts. Some applications require a special font to
+      be passed to the X server.</description>
+    </key>
+
+    <key name="virtual-session-monitors" type="(uu)">
+      <default>(4, 1)</default>
+      <summary>Number of monitors configuration on virtual sessions</summary>
+      <description>
+        Sets the monitor configuration for virtual sessions (max number of monitors,
+        number of enabled monitors).
+      </description>
+    </key>
+
+    <key name="virtual-session-source-profile" type="b">
+      <default>false</default>
+      <summary>Whether to source the user profile in session starter</summary>
+      <description>Specifies whether the shell that runs the session starter script should source the user profile.
+      By default this is false and DCV will run the session starter script with "bash --noprofile --norc"</description>
+    </key>
+
+    <key name="virtual-session-start-timeout" type="i">
+      <default>30000</default>
+      <summary>The timeout in milliseconds to start a virtual session</summary>
+      <description>Sets the period (in milliseconds) to wait before the dbus connection times out while
+      attempting to start a virtual session. Default value 30000 (30 seconds).</description>
+    </key>
+
+    <key name="virtual-session-xdcv-args" type="s">
+      <default>''</default>
+      <summary>Additional arguments to pass to Xdcv</summary>
+      <description>Specifies any additional arguments to be passed to Xdcv.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.session-management.automatic-console-session" path="/com/nicesoftware/dcv/session-management/automatic-console-session/" gettext-domain="dcv">
+
+    <key name="client-eviction-policy" enum="com.nicesoftware.dcv.DcvClientEvictionPolicy">
+      <default>'reject-new-connection'</default>
+      <summary>Specify how to handle client connections when a limit is reached</summary>
+      <description>Specifies whether to reject a new connection or to automatically close an existing
+      connection when the maximum number of concurrent clients per session is reached.
+      Allowed values are 'reject-new-connection' (the incoming connection will be closed), and
+      'same-user-oldest-connection' (the server will close the connection of the same user
+      that hasn't interacted with the session for the longest time or, absent that information,
+      with the oldest connection time).</description>
+    </key>
+
+    <key name="max-concurrent-clients" type="i">
+      <default>-1</default>
+      <summary>Maximum number of concurrent clients per session</summary>
+      <description>Specifies the maximum number of concurrent clients allowed per session. If set to -1, no limit is enforced.</description>
+    </key>
+
+    <key name="owner" type="s">
+      <default>''</default>
+      <summary>Owner of the automatically created "console" session</summary>
+      <description>Specifies the username of the "console" session owner. If empty, the owner is the
+      user who started the DCV server. This setting is applied only to the "console" session
+      automatically created at server startup when the create-session setting is set to
+      true.</description>
+    </key>
+
+    <key name="permissions-file" type="s">
+      <default>''</default>
+      <summary>Permissions file for the automatic "console" session</summary>
+      <description>Specifies the path to the permissions file to be used to check user access to DCV
+      features. If empty, only the owner has full access to the session.</description>
+    </key>
+
+    <key name="storage-root" type="s">
+      <default>''</default>
+      <summary>Path to file storage root folder</summary>
+      <description>Specifies the full path to the folder to be used for console session storage. If
+      the storage-root is empty or the folder does not exist, file storage is
+      disabled.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.session-management.defaults" path="/com/nicesoftware/dcv/session-management/defaults/" gettext-domain="dcv">
+
+    <key name="permissions-file" type="s">
+      <default>''</default>
+      <summary>Default permissions included in all sessions</summary>
+       <description>Specifies the path to the permissions file to be automatically merged with the
+       permissions selected by the user for each session. If empty, use the 'default.perm' file,
+       which is located in /etc/dcv/ for Linux, or in the DCV installation folder (for
+       example, 'C:\Program Files\NICE\DCV\Server\conf') for Windows.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.smartcard" path="/com/nicesoftware/dcv/smartcard/" gettext-domain="dcv">
+
+    <key name="enable-cache" enum="com.nicesoftware.dcv.DcvEnableFeature">
+      <default>'default-on'</default>
+      <summary>Whether to enable smartcard caching messages</summary>
+      <description>Enables or disables smart card caching. When enabled, the NICE DCV server caches
+      the last value received from the client's smart card. Future calls are retrieved directly from
+      the server's cache, instead of from client. This helps to reduce the amount of traffic that is
+      transferred between the client and the server, and improves performance. Allowed values
+      include 'always-on', 'always-off', 'default-on', and 'default-off'. This value is read from
+      the configuration every time a client smartcard application is started.
+      </description>
+    </key>
+
+    <key name="library-injection" enum="com.nicesoftware.dcv.DcvSmartcardLibraryInjection">
+      <default>'auto'</default>
+      <summary>The library injection strategy applied for smartcard.</summary>
+      <description>Specifies whether the library injection should be performed by the server or not when
+      running on Windows.
+      Allowed values include 'auto' (server will enable the injection if the smartcard filter driver is not
+      installed), 'enabled' (injection performed in any case), 'disabled' (injection disabled in any case).
+      This value is read from the configuration every time smartcard service is activated.
+      </description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.webcam" path="/com/nicesoftware/dcv/webcam/" gettext-domain="dcv">
+
+    <key name="codecs" type="as">
+     <default>['vp8', 'jpeg', 'webm']</default>
+       <summary>List of codecs for webcam streaming</summary>
+       <description>The list of available encoding codecs for the webcam streaming. They are sorted by preference.</description>
+    </key>
+
+    <key name="enabled-sessions" enum="com.nicesoftware.dcv.DcvSessionTypeSelector">
+      <default>'none'</default>
+      <summary>Whether to enable webcam injection for the different session types</summary>
+      <description>Specifies whether to enable webcam for the different session types for the
+      linux server. The possible values are 'none', 'console', 'virtual' and 'all' to enable
+      both types Linux session. The default value is 'none'.
+      </description>
+    </key>
+
+    <key name="max-bitrate" type="u">
+      <default>0</default>
+      <summary>Max webcam bitrate in kbps</summary>
+      <description>Specifies the maximum allowed bitrate of the video coded. If this value is
+      missing no constrain will be used.</description>
+    </key>
+
+    <key name="max-resolution" type="(uu)">
+      <default>(1280, 720)</default>
+      <summary>Max webcam resolution</summary>
+      <description>Specifies the maximum webcam resolution that is exposed to applications.</description>
+    </key>
+
+    <key name="monitor-method" enum="com.nicesoftware.dcv.DcvWebcamMonitorMethod">
+      <default>'inotify'</default>
+      <summary>The method used to monitor webcam usage in Linux.</summary>
+      <description>Specifies the method used to determine if the AWS virtual webcam is being used by
+      an application. Allowed values are 'inotify' (the default) and 'disabled' (disable usage monitoring).
+      Usage monitoring allows the DCV client to start streaming only when an application accesses
+      the camera; if monitoring is disabled, the connected client's webcam will be turned on as soon
+      as the user enables the webcam toolbar icon.</description>
+    </key>
+
+    <key name="preferred-resolution" type="(uu)">
+      <default>(480, 360)</default>
+      <summary>The preferred webcam resolution</summary>
+      <description>Specifies the preferred webcam resolution among the resolutions provided by the
+      client. If the specified resolution is not supported, the closest matching resolution is
+      selected and exposed to applications. If one of the values specified is 0, webcam sharing is
+      disabled.</description>
+    </key>
+
+    <key name="webcam-sync-interval" type="u">
+      <default>1000</default>
+      <summary>Number of milliseconds over which the average audio delay is estimated</summary>
+      <description> Sets the size of the time window used to calculate the average delay to be
+      applied to webcam frames in order to force synchronization. Set to 0 to use latest audio
+      latency.</description>
+    </key>
+
+    <key name="webcam-sync-max-delay" type="u">
+      <default>1000</default>
+      <summary>Maximum number of milliseconds for the webcam sync delay</summary>
+      <description>Any positive value enables synchronization of webcam frames with audio coming from the
+      microphone. This sets the maximum number of milliseconds the webcam stream can be delayed to wait
+      for the audio stream. Set to 0 to disable webcam sync.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.windows" path="/com/nicesoftware/dcv/windows/" gettext-domain="dcv">
+
+    <key name="agent-priority-class" enum="com.nicesoftware.dcv.DcvWindowsPriorityClass">
+      <default>'high'</default>
+      <summary>Priority class of the agent</summary>
+      <description>Sets the Windows priority class of the agent processes, one of 'idle',
+      'below-normal', 'normal', 'above-normal', 'high', or 'realtime'. The setting is
+      read at every agent launch.</description>
+    </key>
+
+    <key name="disable-display-sleep" type="b">
+      <default>true</default>
+      <summary>Prevent display from entering power-saving mode</summary>
+      <description>Specifies whether to prevent the display from entering power-saving mode.</description>
+    </key>
+
+    <key name="disable-drag-full-windows" type="b">
+      <default>true</default>
+      <summary>Set the DRAGFULLWINDOWS Windows option</summary>
+      <description>Sets the DRAGFULLWINDOWS Windows option. Set it to false so that dragging windows
+      is more lightweight.</description>
+    </key>
+
+    <key name="disable-dwm-composition" type="b">
+      <default>true</default>
+      <summary>Turn off DWM</summary>
+      <description>Enables or disables the Windows Desktop Window Manager (DWM). This value is
+      ignored in Windows 8 and later.</description>
+    </key>
+
+    <key name="disable-windows-animation" type="b">
+      <default>true</default>
+      <summary>Set the SETANIMATION Windows option</summary>
+      <description>Sets the SETANIMATION Windows option. Set it to false so that the user interface
+      is more lightweight.</description>
+    </key>
+
+    <key name="enable-iocp" type="b">
+      <default>true</default>
+      <summary>Enable I/O completion port for asynchronous I/O</summary>
+      <description>Allows to use the I/O completion port for asynchronous I/O instead of the polling
+      approach in the communication between server and agent.</description>
+    </key>
+
+    <key name="enable-simulate-sas" type="b">
+      <default>true</default>
+      <summary>Enable support for SAS simulation</summary>
+      <description>Enables clients to send the Secure Attention Sequence (SAS, the Ctrl+Alt+Del key
+      combination) to a DCV server computer running Windows.  To be able to simulate SAS on the
+      server computer, the local security policy of the computer must also be configured to allow
+      services to simulate an SAS.</description>
+    </key>
+
+    <key name="printer" type="s">
+      <default>''</default>
+      <summary>Printer to be set as default</summary>
+      <description>Specifies the name of the virtual DCV printer. The name is used to change the
+      default printer on the system. If set to an empty string, DCV will not change the current
+      default printer. Deprecated: use 'file-printer-name' of section 'printer'.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.usb" path="/com/nicesoftware/dcv/usb/" gettext-domain="dcv">
+
+    <key name="usb-allowlist-file" type="s">
+      <default>''</default>
+      <summary>Allowlist file for the permitted USB devices</summary>
+      <description>Specifies the path to the allowlist file containing the USB devices that can be
+      remotized. If empty, the path defaults to the 'usb-devices.conf' file, which is located in
+      /etc/dcv/ for Linux, and the DCV installation folder (for example, 'C:\Program
+      Files\NICE\DCV\Server\conf') for Windows.</description>
+    </key>
+
+    <key name="usb-whitelist-file" type="s">
+      <default>''</default>
+      <summary>Allowlist file for the permitted USB devices</summary>
+      <description>Deprecated: use 'usb-allowlist-file'.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.extensions" path="/com/nicesoftware/dcv/extensions/" gettext-domain="dcv">
+    <key name="enabled" type="b">
+        <default>true</default>
+        <summary>Whether the extensions feature should be enabled</summary>
+        <description>Specifies if the extensions feature is enabled. If the extensions feature is
+        disabled, users will not be able to use third party extensions for DCV.</description>
+    </key>
+
+    <key name="load-policy" enum="com.nicesoftware.dcv.DcvExtensionsManagerLoadPolicy">
+      <default>'only-signed'</default>
+      <summary>Determines if extensions are checked for digital signatures or not.</summary>
+      <description>The valid values are 'all' or 'only-signed' (default='only-signed').
+      If 'all' is specified, extensions will be loaded without checking if the executable
+      contains a valid digital signature. If 'only-signed' is specified, extensions will
+      only be loaded if their executable contains a valid digital signature.</description>
+    </key>
+
+  </schema>
+
+  <schema id="com.nicesoftware.dcv.webauthn" path="/com/nicesoftware/dcv/webauthn/" gettext-domain="dcv">
+    <key name="enabled" type="b">
+      <default>true</default>
+      <summary>Whether the webauthn redirection feature should be enabled</summary>
+      <description>
+      This setting controls the redirection of WebAuthn requests.
+      When enabled, it allows users to authenticate for web resources using their local authenticator, such as YubiKey, Windows Hello, or others.
+      If you disable this setting, WebAuthn redirection will be disabled, and users won't be able to use their local authenticators.
+      </description>
+    </key>
+
+  </schema>
+
+</schemalist>
