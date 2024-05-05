@@ -1,0 +1,10 @@
+{
+    "name": "com.dcv.webauthnredirection.nativemessagehost",
+    "description": "DCV WebAuthn Redirection Native Message Host",
+    "path": "C:\\Program Files\\NICE\\DCV\\Server\\bin\\dcvwebauthnnativemsghost.exe",
+    "type": "stdio",
+    "allowed_origins": [
+      "chrome-extension://mmiioagbgnbojdbcjoddlefhmcocfpmn/",
+      "chrome-extension://ihejeaahjpbegmaaegiikmlphghlfmeh/"
+    ]
+  }
