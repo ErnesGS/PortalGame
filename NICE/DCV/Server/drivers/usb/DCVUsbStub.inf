@@ -1,0 +1,92 @@
+;/*++
+;
+;Copyright (c) 2000-2021 Electronic Team, Inc. All rights reserved.
+;
+;Module Name:
+;
+;    DCVUsbStub.inf
+;
+;Abstract:
+;    INF file for installing Usb Stub
+;
+;--*/
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=DCVUsbStub
+ClassGuid={FC8AA338-9590-43A8-8211-4489351470A3}
+Provider=%NICE%
+DriverVer=01/24/2022,2022.0.151.0
+CatalogFile=DCVUsbDrivers.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[ClassInstall32]
+Addreg=DCVUsbStubClassReg
+CopyFiles=UsbStub.NT.Copy
+
+[DCVUsbStubClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-20
+HKR,,SilentInstall,,1
+HKR,,NoInstallClass,,1
+
+
+[Manufacturer]
+%StdMfg%=DCV, NTx86, NTia64, NTamd64
+
+;x86
+[DCV.NTx86]
+%UsbStubDevice.DeviceDesc%=UsbStub, DCVUsbStub
+
+;AMD64
+[DCV.NTamd64]
+%UsbStubDevice.DeviceDesc%=UsbStub, DCVUsbStub
+
+;IA64
+[DCV.NTia64]
+%UsbStubDevice.DeviceDesc%=UsbStub, DCVUsbStub
+;arm
+[DCV.NTarm]
+%UsbStubDevice.DeviceDesc%=UsbStub, DCVUsbStub
+
+;arm64
+[DCV.NTarm64]
+%UsbStubDevice.DeviceDesc%=UsbStub, DCVUsbStub
+
+
+[UsbStub.NT]
+CopyFiles=UsbStub.NT.Copy
+
+[UsbStub.NT.Copy]
+dcvusbstub.sys
+
+;-------------- Service installation
+
+[UsbStub.NT.Services]
+AddService = dcvusbstub, %SPSVCINST_ASSOCSERVICE%, UsbStub_Service_Inst
+
+; -------------- VSerial Driver install sections
+[UsbStub_Service_Inst]
+DisplayName    = %UsbStub.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\dcvusbstub.sys
+LoadOrderGroup = Extended Base
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+dcvusbstub.sys  = 1,,
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+NICE = "Nice s.r.l."
+ClassName = "DCV Usb Stub"
+UsbStubDevice.DeviceDesc = "DCV Usb Stub"
+UsbStub.SVCDESC = "DCV Usb Stub"
+DiskId1 = "DCV USB device remotization Disk #1"
+StdMfg = "Nice s.r.l."

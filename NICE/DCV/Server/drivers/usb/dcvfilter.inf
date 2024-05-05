@@ -1,0 +1,76 @@
+;Copyright (c) 2000-2022 Nice s.r.l. All rights reserved.
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%MSFT%
+DriverVer=01/24/2022,2022.0.151.0
+CatalogFile=DCVUsbDrivers.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+dcvusbfilter.sys  = 1,,
+
+;*****************************************
+; DCVUSBFILTER  Install Section
+;*****************************************
+
+[Manufacturer]
+%StdMfg%=DCV, NTx86, NTia64, NTamd64
+;2000
+[DCV]
+%DCVUSBFILTER.DeviceDesc%=DCVUSBFILTER_Device, dcvusbfilter
+
+;x86
+[DCV.NTx86]
+%DCVUSBFILTER.DeviceDesc%=DCVUSBFILTER_Device, dcvusbfilter
+
+;AMD64
+[DCV.NTamd64]
+%DCVUSBFILTER.DeviceDesc%=DCVUSBFILTER_Device, dcvusbfilter
+
+;IA64
+[DCV.NTia64]
+%DCVUSBFILTER.DeviceDesc%=DCVUSBFILTER_Device, dcvusbfilter
+
+;arm
+[DCV.NTarm]
+%DCVUSBFILTER.DeviceDesc%=DCVUSBFILTER_Device, dcvusbfilter
+
+;arm64
+[DCV.NTarm64]
+%DCVUSBFILTER.DeviceDesc%=DCVUSBFILTER_Device, dcvusbfilter
+
+[DCVUSBFILTER_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+dcvusbfilter.sys
+
+;-------------- Service installation
+[DCVUSBFILTER_Device.NT.Services]
+AddService = dcvusbfilter,%SPSVCINST_ASSOCSERVICE%, dcvusbfilter_Service_Inst
+
+; -------------- busenum driver install sections
+[dcvusbfilter_Service_Inst]
+DisplayName    = %dcvusbfilter.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START 
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\dcvusbfilter.sys
+LoadOrderGroup = Extended Base
+
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+MSFT = "Nice s.r.l."
+StdMfg = "Nice s.r.l."
+DiskId1 = "DCV Usb Hub Filter Disk #1"
+DCVUSBFILTER.DeviceDesc = "DCV Usb Hub Filter"
+dcvusbfilter.SVCDESC = "DCV Usb Hub Filter"

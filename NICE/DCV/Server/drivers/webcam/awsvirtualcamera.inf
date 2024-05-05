@@ -1,0 +1,265 @@
+;
+; AWS Virtual Camera (AWSVirtualCamera.sys) installation file.
+;
+
+[Version]
+signature="$Windows NT$"
+;Class=Camera
+;ClassGuid={ca3e7ab9-b4c3-4ae6-8251-579ef933890f}
+Class=Media
+ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
+PnpLockdown=1
+Provider=%ProviderName%
+Catalogfile=AWSVirtualCamera.cat
+DriverVer=05/10/2022,1.0.0.6
+
+[SourceDisksNames]
+1 = %DiskId1%,,,""
+
+[SourceDisksFiles]
+AWSVirtualCamera.sys=1
+AWSVirtualCameraMft0.dll=1
+
+[DestinationDirs]
+AWSVirtualCamera.CopySys  = 12
+AWSVirtualCamera.CopyMft0 = 11
+
+[AWSVirtualCamera.CopySys]
+AWSVirtualCamera.sys
+
+[AWSVirtualCamera.CopyMft0]
+AWSVirtualCameraMft0.dll
+
+[Manufacturer]
+%ManufacturerName%=AWSVirtualCamera.Device,NTamd64
+
+;
+;   The following section is needed to expose a camera enumerated under the
+;   the graphics subsystem.  Since our driver is install under ROOT, this is
+;   not really needed.
+;
+; Uncomment the following lines to add security ACLs.
+;
+;[AWSVirtualCamera.Device.NTamd64.HW]
+;AddReg = AWSVirtualCamera.NTamd64.HW.AddReg
+;
+;[AWSVirtualCamera.Device.NTamd64.HW.AddReg]
+;HKR,,Security,, "D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;GRGWGX;;;WD)(A;;GRGX;;;RC)"
+
+[AWSVirtualCamera.Device.NTamd64]
+%AWSVirtualCamera.DeviceDesc%=AWSVirtualCamera,Root\AWSVirtualCamera
+
+[AWSVirtualCamera]
+CopyFiles=AWSVirtualCamera.CopySys, AWSVirtualCamera.CopyMft0
+AddReg=AWSVirtualCamera.MFT.AddReg
+Include=ks.inf, kscaptur.inf, dshowext.inf
+Needs=KS.Registration, KSCAPTUR.Registration.NT, DSHOWEXT.Registration
+
+[AWSVirtualCamera.HW]
+AddReg=AWSVirtualCamera.Device0.AddReg
+
+[AWSVirtualCamera.Device0.AddReg]
+HKR,,FriendlyName,,%AWSVirtualCamera.FriendlyName%
+
+;[Wd3ksdrv.RunOnce.AddReg]
+;HKLM, %RunOnce%, "Wd3ksdrv.Reader.Capture",,"rundll32.exe streamci,StreamingDeviceSetup %Wd3ksdrv.DeviceId%,%KSSTRING_Filter%,%KSCATEGORY_CAPTURE%,%01%\Wd3ksdrv.inf,Wd3ksdrv.Reader.Install"
+;Wd3ksdrv.DeviceId       = "{9ADCB660-5547-4df8-8DC6-1B95EB0EA3AB}"
+;KSCATEGORY_CAPTURE      = "{65E8773D-8F56-11D0-A3B9-00A0C9223196}"
+;KSSTRING_Filter         = "{9B365890-165F-11D0-A195-0020AFD156E4}"
+; rundll32.exe streamci,StreamingDeviceSetup AWSVirtualCamera.RearCamera.AddReg
+
+;---------------------------------------------------------------
+;                Install as a Root-enumerated device.
+;                NOTE: DO NOT INCLUDE THIS FOR A HARDWARE DRIVER!
+;---------------------------------------------------------------
+
+[DeviceInstall32]
+AddDevice = Root\AWSVirtualCamera\0000,,AWSVirtualCamera_RootDevice_Inst
+
+[AWSVirtualCamera_RootDevice_Inst]
+HardwareIds = Root\AWSVirtualCamera
+
+;---------------------------------------------------------------
+;                I n t e r f a c e s
+;---------------------------------------------------------------
+
+[AWSVirtualCamera.Interfaces]
+AddInterface=%KSCATEGORY_VIDEO_CAMERA%,%AWSVirtualCamera_RearFilterName%,RearCameraInterface.NT,
+AddInterface=%KSCATEGORY_VIDEO_CAMERA%,%AWSVirtualCamera_FrontFilterName%,FrontCameraInterface.NT,
+AddInterface=%KSCATEGORY_VIDEO%,%AWSVirtualCamera_RearFilterName%,RearCameraInterface.NT,
+AddInterface=%KSCATEGORY_CAPTURE%,%AWSVirtualCamera_RearFilterName%,RearCameraInterface.NT,
+
+[RearCameraInterface.NT]
+AddReg=AWSVirtualCamera.RearCamera.AddReg
+
+; Uncomment the following line to enable profile information.
+;AddReg=AWSVirtualCamera.Profiles.RearCamera.AddReg
+
+[FrontCameraInterface.NT]
+AddReg=AWSVirtualCamera.FrontCamera.AddReg
+
+; Uncomment the following line to enable profile information.
+;AddReg=AWSVirtualCamera.Profiles.FrontCamera.AddReg
+
+;---------------------------------------------------------------
+;                A d d R e g
+;---------------------------------------------------------------
+
+[AWSVirtualCamera.FrontCamera.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%AWSVirtualCamera.Front%
+HKR,,CameraPostProcessingPluginCLSID,,%MFT0.CLSID%
+
+;
+;   Profile information for the front camera
+;
+; Uncomment the following lines to enable profile information.
+;
+;[AWSVirtualCamera.Profiles.FrontCamera.AddReg]
+;HKR,,"OEMCameraProfiles",0,"KSCAMERAPROFILE_VideoRecording,0;KSCAMERAPROFILE_VideoRecording,1;KSCAMERAPROFILE_VideoRecording,2;KSCAMERAPROFILE_VideoConferencing,0;KSCAMERAPROFILE_HighQualityPhoto,0;KSCAMERAPROFILE_PhotoSequence,0;KSCAMERAPROFILE_BalancedVideoAndPhoto,0;{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0",
+;HKR,,"ReferenceGUID",0,%AWSVirtualCamera_FrontFilterName%
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","Media0",0,"640,480,0,0,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","Media1",0,"640,480,30000,1001,0x10,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,60000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,60000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,10000000,83333,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,10000000,83333,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_PhotoSequence,0","Disabled",0x00010001,1
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","Media0",0,"640,480,0,0,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","Media1",0,"640,480,30000,1001,0x10,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0","Concurrency",0,"%AWSVirtualCamera_FrontFilterName%;KSCAMERAPROFILE_VideoConferencing,0"
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_PREVIEW","Media0",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_CAPTURE","Media0",0,"320,240,30000,1001,0,0,0,0,0"
+
+[AWSVirtualCamera.RearCamera.AddReg]
+HKR,,CLSID,,%Proxy.CLSID%
+HKR,,FriendlyName,,%AWSVirtualCamera.Rear%
+HKR,,CameraPostProcessingPluginCLSID,,%MFT0.CLSID%
+
+;
+;   Profile information for the front camera
+;
+; Uncomment the following lines to enable profile information.
+;
+;[AWSVirtualCamera.Profiles.RearCamera.AddReg]
+;HKR,,"OEMCameraProfiles",0,"KSCAMERAPROFILE_VideoRecording,0;KSCAMERAPROFILE_VideoRecording,1;KSCAMERAPROFILE_VideoRecording,2;KSCAMERAPROFILE_VideoConferencing,0;KSCAMERAPROFILE_HighQualityPhoto,0;KSCAMERAPROFILE_PhotoSequence,0;KSCAMERAPROFILE_BalancedVideoAndPhoto,0;{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0",
+;HKR,,"ReferenceGUID",0,%AWSVirtualCamera_RearFilterName%
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","Media0",0,"640,480,0,0,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_BalancedVideoAndPhoto,0\PINNAME_IMAGE","Media1",0,"640,480,30000,1001,0x10,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,2,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,0\PINNAME_VIDEO_CAPTURE","Media1",0,"320,240,30000,1001,2,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,60000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,1\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,60000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,10000000,83333,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"KSCAMERAPROFILE_VideoRecording,2\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,10000000,83333,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_PhotoSequence,0","Disabled",0x00010001,1
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","Media0",0,"640,480,0,0,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_HighQualityPhoto,0\PINNAME_IMAGE","Media1",0,"640,480,30000,1001,0x10,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_PREVIEW","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,2
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0\PINNAME_VIDEO_CAPTURE","Media1",0,"320,240,30000,1001,0,0,0,0,0"
+;HKR,"KSCAMERAPROFILE_VideoConferencing,0","Concurrency",0,"%AWSVirtualCamera_RearFilterName%;KSCAMERAPROFILE_VideoConferencing,0"
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_PREVIEW","MediaCount",0x00010001,1
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_PREVIEW","Media0",0,"640,480,30000,1001,0,0,0,0,0"
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_CAPTURE","MediaCount",0x00010001,1
+;HKR,"{F2D45EB9-549C-46FE-9CC7-A8A673A06EB9},0\PINNAME_VIDEO_CAPTURE","Media0",0,"320,240,30000,1001,0,0,0,0,0"
+
+[AWSVirtualCamera.MFT.AddReg]
+HKCR,CLSID\%MFT0.CLSID%,,,"AWSVirtualCamera MFT0 Class"
+HKCR,CLSID\%MFT0.CLSID%\InprocServer32,,%REG_EXPAND_SZ%,"%%SystemRoot%%\system32\AWSVirtualCameraMft0.dll"
+HKCR,CLSID\%MFT0.CLSID%\InprocServer32,ThreadingModel,,"Both"
+
+
+;---------------------------------------------------------------
+;                S e r v i c e s
+;---------------------------------------------------------------
+
+[AWSVirtualCamera.Services]
+AddService=AWSVirtualCamera, 0x00000002, AWSVirtualCamera.ServiceInstall
+
+[AWSVirtualCamera.ServiceInstall]
+DisplayName=%AWSVirtualCamera.DeviceDesc%
+ServiceType=%SERVICE_KERNEL_DRIVER%
+StartType=%SERVICE_DEMAND_START%
+ErrorControl=%SERVICE_ERROR_NORMAL%
+ServiceBinary=%12%\AWSVirtualCamera.sys
+
+;---------------------------------------------------------------
+;                S t r i n g s
+;---------------------------------------------------------------
+
+[Strings]
+
+; non-localizable
+MediaCategories="SYSTEM\CurrentControlSet\Control\MediaCategories"
+Proxy.CLSID="{17CCA71B-ECD7-11D0-B908-00A0C9223196}"
+KSCATEGORY_VIDEO_CAMERA="{E5323777-F976-4f5b-9B55-B94699C46E44}"
+KSCATEGORY_CAPTURE="{65E8773D-8F56-11D0-A3B9-00A0C9223196}"
+KSCATEGORY_VIDEO="{6994AD05-93EF-11D0-A3CC-00A0C9223196}"
+MFT0.CLSID="{1C2CE17A-FAAD-4E73-85E7-167068093F25}"
+
+; The following GUIDs need to match the filter factory descriptors
+AWSVirtualCamera_FrontFilterName="{B27E3887-AD10-4A4E-BFB8-D6765ADD0E38}"
+AWSVirtualCamera_RearFilterName= "{4EE16166-F358-4F10-8889-93107806B7A7}"
+
+SERVICE_KERNEL_DRIVER=1
+SERVICE_DEMAND_START=3
+SERVICE_ERROR_NORMAL=1
+REG_DWORD=0x00010001
+REG_EXPAND_SZ=0x00020000
+
+;localizable
+ProviderName="Amazon Web Services, Inc."
+ManufacturerName="Amazon Web Services, Inc."
+DiskId1="AWSVirtualCamera Disk"
+AWSVirtualCamera.DeviceDesc="AWS Virtual Camera Device"
+AWSVirtualCamera.FriendlyName="AWS Virtual Camera"
+AWSVirtualCamera.Rear="AWSVirtualCamera RFC"
+AWSVirtualCamera.Front="AWSVirtualCamera FFC"
