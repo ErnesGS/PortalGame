@@ -1,0 +1,330 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: #1a1a1a;
+    color: #f0f0f0;
+    line-height: 1.6;
+}
+
+header {
+    background: #333;
+    padding: 20px;
+    text-align: center;
+}
+
+header #menu {
+    display: flex;
+    justify-content: center;
+}
+
+header ul {
+    list-style: none;
+    display: flex;
+}
+
+header ul li {
+    position: relative;
+}
+
+header ul li a {
+    display: block;
+    padding: 10px 20px;
+    color: #f0f0f0;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+header ul li a:hover {
+    background: #575757;
+}
+
+header ul li ul {
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    background: #444;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+header ul li:hover ul {
+    display: block;
+}
+
+header ul li ul li {
+    width: 200px;
+}
+
+main {
+    padding: 20px;
+    max-width: 800px;
+    margin: 40px auto;
+    background: #2a2a2a;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+form input[type="text"],
+form input[type="password"],
+form input[type="email"],
+form select {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    background: #444;
+    color: #f0f0f0;
+}
+
+form button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #f39c12;
+    color: #1a1a1a;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+form button:hover {
+    background: #e67e22;
+}
+
+/* Estilos para la tabla */
+
+table#resultados {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #2a2a2a;
+    color: #f0f0f0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+table#resultados thead {
+    background: #333;
+}
+
+table#resultados thead th {
+    padding: 15px;
+    text-align: left;
+    font-weight: bold;
+    border-bottom: 2px solid #444;
+}
+
+table#resultados tbody tr {
+    border-bottom: 1px solid #444;
+}
+
+table#resultados tbody tr:nth-child(even) {
+    background: #3a3a3a;
+}
+
+table#resultados tbody tr:hover {
+    background: #444;
+}
+
+table#resultados tbody td {
+    padding: 15px;
+}
+
+table#resultados tbody a {
+    color: #f39c12;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+table#resultados tbody a:hover {
+    color: #e67e22;
+}
+
+/* Estilo para el contenedor del menú de administración */
+#administrar {
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 10px;
+    max-width: 800px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#administrar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#administrar > ul > li {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+#administrar > ul > li > a {
+    display: block;
+    padding: 10px;
+    background-color: #444;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#administrar > ul > li > a:hover {
+    background-color: #555;
+}
+
+#administrar ul ul li {
+    margin: 0;
+    padding: 0;
+}
+
+#administrar ul ul li a {
+    display: block;
+    padding: 10px;
+    color: #fff;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    border-bottom: 1px solid #555;
+}
+
+#administrar ul ul li:last-child a {
+    border-bottom: none;
+}
+
+#administrar ul ul li a:hover {
+    background-color: #555;
+}
+
+#administrar > ul > li:hover > ul {
+    display: block;
+}
+
+/* Estilo general del contenedor de la biblioteca */
+#biblioteca {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 1200px;
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#biblioteca ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+#biblioteca ul li {
+    border-radius: 10px;
+    margin: 10px;
+    padding: 15px;
+    width: calc(40% - 200px); /* Ajuste para espaciar correctamente */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+    text-align: center;
+}
+
+#biblioteca ul li:hover {
+    transform: scale(1.05);
+}
+
+#biblioteca ul li img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+#biblioteca ul li p {
+    margin: 10px 0;
+    font-size: 1em;
+    color: #fff;
+}
+
+#biblioteca ul li a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#biblioteca ul li a:hover {
+    background-color: #0056b3;
+}
+
+#biblioteca ul li {
+    position: relative;
+}
+
+#biblioteca ul li .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    border-radius: 10px;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+#biblioteca ul li:hover .overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Pantalla de carga */
+#loader {
+    text-align: center;
+}
+
+#progress-bar {
+    width: 80%;
+    background-color: #555;
+    border-radius: 25px;
+    overflow: hidden;
+    margin: 20px auto;
+}
+
+#progress {
+    width: 0;
+    height: 25px;
+    background-color: #1E90FF;
+    border-radius: 25px 0 0 25px;
+}
