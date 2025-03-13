@@ -1,3 +1,7 @@
+Proyecto actualmente abandonado. Disculpen las molestias
+
+---
+
 # OpenPortal
 
 ## The gate to the cloud experience
