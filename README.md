@@ -140,3 +140,7 @@ OpenPortal es una solución escalable para juegos en la nube que ofrece facilida
 - [MongoDB Manual](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-debian/)
 - [PHP MongoDB](https://www.php.net/manual/es/set.mongodb.php)
 - [CertBot](https://certbot.eff.org/instructions)
+
+---
+
+Si le interesa buscar una documentación más detallada es libre de mirar el archivo .pdf en el repositorio del proyecto
